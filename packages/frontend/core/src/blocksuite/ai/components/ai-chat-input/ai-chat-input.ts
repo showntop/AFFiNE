@@ -20,7 +20,12 @@ import { reportResponse } from '../../utils/action-reporter';
 import { readBlobAsURL } from '../../utils/image';
 import { mergeStreamObjects } from '../../utils/stream-objects';
 import type { SearchMenuConfig } from '../ai-chat-add-context';
-import type { ChatChip, DocDisplayConfig } from '../ai-chat-chips/type';
+import type {
+  ChatChip,
+  DocChip,
+  DocDisplayConfig,
+  FileChip,
+} from '../ai-chat-chips/type';
 import { isDocChip } from '../ai-chat-chips/utils';
 import {
   type ChatMessage,
@@ -348,6 +353,21 @@ export class AIChatInput extends SignalWatcher(
   accessor addChip!: (chip: ChatChip, silent?: boolean) => Promise<void>;
 
   @property({ attribute: false })
+  accessor updateChip!: (
+    chip: ChatChip,
+    options: Partial<DocChip | FileChip>
+  ) => void;
+
+  @property({ attribute: false })
+  accessor removeChip!: (chip: ChatChip) => Promise<void>;
+
+  @property({ attribute: false })
+  accessor toggleChipsCollapse!: () => void;
+
+  @state()
+  accessor isChipsCollapsed = false;
+
+  @property({ attribute: false })
   accessor networkSearchConfig!: AINetworkSearchConfig;
 
   @property({ attribute: false })
@@ -459,6 +479,18 @@ export class AIChatInput extends SignalWatcher(
       })}
       @pointerdown=${this._handlePointerDown}
     >
+      <chat-panel-chips
+        .chips=${this.chips}
+        .isCollapsed=${this.isChipsCollapsed}
+        .independentMode=${this.independentMode}
+        .addChip=${this.addChip}
+        .updateChip=${this.updateChip}
+        .removeChip=${this.removeChip}
+        .toggleCollapse=${this.toggleChipsCollapse}
+        .docDisplayConfig=${this.docDisplayConfig}
+        .portalContainer=${this.portalContainer}
+        .addImages=${this.addImages}
+      ></chat-panel-chips>
       ${hasImages
         ? html`
             <image-preview-grid
@@ -489,7 +521,7 @@ export class AIChatInput extends SignalWatcher(
         : nothing}
       <textarea
         rows="1"
-        placeholder="What are your thoughts?"
+        placeholder="To do what you think."
         @input=${this._handleInput}
         @keydown=${this._handleKeyDown}
         @focus=${() => {
@@ -517,7 +549,7 @@ export class AIChatInput extends SignalWatcher(
         <chat-input-preference
           .session=${this.session}
           .onModelChange=${this._handleModelChange}
-          .modelId=${this.modelId}
+          .modelId=${this.modelId ?? this.session?.model}
           .extendedThinking=${this._isReasoningActive}
           .onExtendedThinkingChange=${this._toggleReasoning}
           .networkSearchVisible=${!!this.networkSearchConfig.visible.value}

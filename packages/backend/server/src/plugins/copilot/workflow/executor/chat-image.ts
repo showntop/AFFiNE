@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 import { ChatPrompt, PromptService } from '../../prompt';
 import {
@@ -13,7 +14,7 @@ import { AutoRegisteredWorkflowExecutor } from './utils';
 @Injectable()
 export class CopilotChatImageExecutor extends AutoRegisteredWorkflowExecutor {
   constructor(
-    private readonly promptService: PromptService,
+    private readonly moduleRef: ModuleRef,
     private readonly providerFactory: CopilotProviderFactory
   ) {
     super();
@@ -39,7 +40,8 @@ export class CopilotChatImageExecutor extends AutoRegisteredWorkflowExecutor {
         `Prompt name not found when running workflow node ${data.name}`
       );
     }
-    const prompt = await this.promptService.get(data.promptName);
+    const promptService = this.moduleRef.get(PromptService, { strict: false });
+    const prompt = await promptService.get(data.promptName);
     if (!prompt) {
       throw new Error(
         `Prompt ${data.promptName} not found when running workflow node ${data.name}`

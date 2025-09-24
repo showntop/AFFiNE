@@ -16,6 +16,14 @@ export class ImagePreviewGrid extends LitElement {
       /* to prevent the close button from being clipped */
       padding-top: 8px;
       margin-top: -8px;
+
+      /* 隐藏滚动条但保持滚动功能 */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    .image-preview-wrapper::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
     }
 
     ${scrollbarStyle('.image-preview-wrapper')}
@@ -29,8 +37,8 @@ export class ImagePreviewGrid extends LitElement {
     }
 
     .image-container {
-      width: 68px;
-      height: 68px;
+      width: 28px;
+      height: 28px;
       border-radius: 4px;
       cursor: pointer;
       position: relative;

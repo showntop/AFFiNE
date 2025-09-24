@@ -12,8 +12,10 @@ export enum CopilotProviderType {
   Gemini = 'gemini',
   GeminiVertex = 'geminiVertex',
   OpenAI = 'openai',
+  OpenAICompatible = 'openaiCompatible',
   Perplexity = 'perplexity',
   Morph = 'morph',
+  SiliconFlow = 'siliconflow',
 }
 
 export const CopilotProviderSchema = z.object({
@@ -59,6 +61,7 @@ export const VertexSchema: JSONSchema = {
 
 export const PromptToolsSchema = z
   .enum([
+    'agentRouter',
     'blobRead',
     'codeArtifact',
     'conversationSummary',
@@ -73,8 +76,14 @@ export const PromptToolsSchema = z
     'webSearch',
     // artifact tools
     'docCompose',
+    // creation tools
+    'docCreate',
+    'folderCreate',
+    'tagCreate',
     // section editing
     'sectionEdit',
+    // workflow creation
+    'workflowCreate',
   ])
   .array();
 

@@ -6,9 +6,10 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage as RawSubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { ClsInterceptor } from 'nestjs-cls';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import {
   CallMetric,
@@ -141,6 +142,9 @@ export class SpaceSyncGateway
 {
   protected logger = new Logger(SpaceSyncGateway.name);
 
+  @WebSocketServer()
+  server?: Server;
+
   private connectionCount = 0;
 
   constructor(
@@ -164,6 +168,41 @@ export class SpaceSyncGateway
       `Connection disconnected, total: ${this.connectionCount}`
     );
     metrics.socketio.gauge('connections').record(this.connectionCount);
+  }
+
+  /**
+   * 公共方法：广播文档更新给客户端
+   * 供 DocBroadcastListener 调用
+   */
+  async broadcastDocUpdate(
+    spaceType: string,
+    spaceId: string,
+    docId: string,
+    update: string,
+    editor?: string
+  ) {
+    const timestamp = Date.now();
+
+    // 广播给 0.19.x 客户端
+    this.server?.to(Room(spaceId, 'sync-019')).emit('space:broadcast-doc-updates', {
+      spaceType,
+      spaceId,
+      docId,
+      updates: [update],
+      timestamp,
+    });
+
+    // 广播给新客户端
+    this.server?.to(`workspace:${spaceId}:sync`).emit('space:broadcast-doc-update', {
+      spaceType,
+      spaceId,
+      docId,
+      update,
+      timestamp,
+      editor,
+    });
+
+    this.logger.debug(`Broadcasted doc ${docId} to workspace ${spaceId}`);
   }
 
   selectAdapter(client: Socket, spaceType: SpaceType): SyncSocketAdapter {

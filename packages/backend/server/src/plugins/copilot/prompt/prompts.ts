@@ -50,6 +50,17 @@ export const Scenario = {
     'workflow:presentation:step2',
     'workflow:presentation:step4',
   ],
+  novel_creation: [
+    'Create Long Novel',
+    'Novel Market Research',
+    'Novel Basic Setting',
+    'Novel Worldbuilding',
+    'Novel Character Design',
+    'Novel Plot Design',
+    'Novel Outline Design',
+    'Novel Chapter Writing',
+    'Novel Review and Enhancement',
+  ],
   quick_decision_making: [
     'Create headings',
     'Generate a caption',
@@ -376,12 +387,923 @@ const workflows: Prompt[] = [
   },
 ];
 
+// 长篇小说创作相关的workflow步骤
+const novelWorkflows: Prompt[] = [
+  {
+    name: 'workflow:novel',
+    action: 'workflow:novel',
+    // 主workflow入口
+    model: 'novel',
+    messages: [],
+  },
+  {
+    name: 'workflow:novel:market-research',
+    action: 'workflow:novel:market-research',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.7,
+      tools: ['webSearch', 'docCompose', 'docCreate', 'folderCreate', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位资深的文学市场分析师和编辑。基于用户提供的小说灵感或要求，你需要进行全面的市场调研分析。
+
+**分析内容包括：**
+1. **目标受众分析**：年龄层、性别比例、阅读偏好、消费习惯
+2. **市场趋势**：当前流行的题材、风格、叙事手法
+3. **竞品分析**：类似题材的成功作品、特点分析
+4. **商业价值**：市场潜力、变现可能性、IP开发前景
+5. **创作建议**：基于市场分析的创作方向建议
+
+**输出格式要求：**
+使用结构化的markdown格式，包含以下章节：
+- ## 目标受众画像
+- ## 市场趋势分析  
+- ## 竞品对标分析
+- ## 商业价值评估
+- ## 创作方向建议
+
+请确保分析客观、数据驱动，并提供具体可行的建议。`,
+      },
+      {
+        role: 'user',
+        content: '基于以下小说灵感进行市场调研分析：\n{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:basic-setting',
+    action: 'workflow:novel:basic-setting',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docCreate', 'docEdit', 'folderCreate', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位经验丰富的小说策划师。基于市场调研结果和原始灵感的内容，设计小说的基础设定。
+
+Note: 市场调研不一定会提供，如果没有提供，请根据原始灵感进行发挥设计基础设定。
+
+**需要确定的基础设定：**
+1. **小说类型**：奇幻、科幻、都市、历史、悬疑、言情等
+2. **故事结构**：三幕式、英雄之旅、多线叙事等
+3. **故事梗概**：核心冲突、主要情节线
+4. **叙事风格**：第一人称/第三人称、现实主义/浪漫主义等
+5. **节奏控制**：快节奏/慢节奏、张弛有度的安排
+6. **语言风格**：古典/现代、幽默/严肃、简洁/华丽
+7. **整体基调**：轻松/沉重、希望/绝望、温暖/冷酷
+8. **叙事视角**：全知视角/限知视角/多重视角
+
+**输出格式：**
+使用以下markdown格式：
+
+# 小说基础设定
+
+## 基本信息
+- 小说类型：
+- 预估字数：
+- 目标读者：
+
+## 故事核心
+- 核心主题：
+- 主要冲突：
+- 故事梗概：（200-300字）
+
+## 创作风格
+- 叙事结构：
+- 叙事视角：
+- 语言风格：
+- 整体基调：
+- 节奏控制：`,
+      },
+      {
+        role: 'user',
+        content: `基于以下市场调研结果和原始灵感，设计小说基础设定：
+
+**原始灵感：**
+{{originalIdea}}
+
+**市场调研结果：**
+{{marketResearch}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:worldbuilding',
+    action: 'workflow:novel:worldbuilding',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.9,
+      tools: ['docCreate', 'docEdit', 'folderCreate', 'tagCreate', 'sectionEdit']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位世界观构建专家。基于小说的基础设定，构建详细的世界观设定。根据小说类型选择合适的世界观元素。
+
+**世界观构建要素：**
+1. **时空背景**：时代、地理位置、社会环境
+2. **历史脉络**：重要历史事件、时间线
+3. **地理环境**：地形、气候、重要地点
+4. **社会结构**：政治体系、经济体系、社会阶层
+5. **文化体系**：宗教信仰、价值观念、风俗习惯
+6. **科技/魔法体系**：（根据类型）科技水平或魔法规则
+7. **种族/势力**：不同群体及其特征
+8. **重要设定**：独特的世界规则、特殊现象
+
+**输出要求：**
+- 详细但不冗余，重点突出与故事相关的设定
+- 确保内部逻辑一致性
+- 为后续情节发展预留空间
+- 体现小说的独特性和创新点
+
+**输出格式：**
+请使用以下结构化的markdown格式输出世界观设定。`,
+      },
+      {
+        role: 'user',
+        content: `基于以下基础设定，构建详细的世界观：
+
+**基础设定：**
+{{basicSetting}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:character-design',
+    action: 'workflow:novel:character-design',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docCreate', 'docEdit', 'tagCreate', 'sectionEdit']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位角色设计专家。基于世界观设定，设计完整的人物体系和人物关系图谱。
+
+**人物设计要素：**
+1. **基本信息**：姓名、年龄、性别、种族/出身
+2. **外貌特征**：身高体型、面容特点、着装风格、标志性特征
+3. **性格特质**：核心性格、优缺点、行为习惯、说话方式
+4. **背景故事**：成长经历、重要事件、创伤或成就
+5. **能力技能**：特长、弱点、成长潜力
+6. **人物动机**：核心欲望、恐惧、价值观
+7. **人物弧光**：成长轨迹、变化过程
+8. **关系网络**：与其他角色的关系
+
+**人物分类：**
+- **主角**：1-2位，故事核心
+- **重要配角**：3-5位，推动情节发展
+- **支撑角色**：若干，丰富世界观
+- **反派角色**：主要对立面
+
+**输出格式：**
+请创建详细的人物设计文档，包含主要角色信息、人物关系和互动模式。`,
+      },
+      {
+        role: 'user',
+        content: `基于以下世界观设定，设计完整的人物体系：
+
+**世界观设定：**
+{{worldbuilding}}
+
+**基础设定参考：**
+{{basicSetting}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:plot-design',
+    action: 'workflow:novel:plot-design',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.7,
+      tools: ['docCreate', 'docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位情节设计专家。基于人物设定，设计核心情节冲突、高潮事件和关键转折点。
+
+**情节设计要素：**
+1. **核心冲突**：主要矛盾、对立面
+2. **情节线索**：主线、副线的设计
+3. **关键事件**：推动情节的重要事件
+4. **高潮设计**：多个高潮点的安排
+5. **转折点**：改变故事走向的关键时刻
+6. **伏笔布局**：为后续情节埋下的线索
+7. **冲突升级**：矛盾如何逐步激化
+8. **情感节拍**：情感起伏的安排
+
+**输出格式：**
+请创建完整的情节设计方案，包含核心冲突、关键事件、转折点和伏笔布局。`,
+      },
+      {
+        role: 'user',
+        content: `基于以下人物设定，设计情节冲突和关键事件：
+
+**人物设定：**
+{{characterDesign}}
+
+**世界观参考：**
+{{worldbuilding}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:outline-design',
+    action: 'workflow:novel:outline-design',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.6,
+      tools: ['docCreate', 'docEdit', 'folderCreate', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位大纲设计专家。基于情节设计，创建详细的章节大纲。
+
+**大纲设计原则：**
+1. **结构清晰**：章节划分合理，逻辑性强
+2. **节奏控制**：张弛有度，高潮低潮交替
+3. **信息分配**：重要信息的揭示时机
+4. **人物发展**：角色成长的阶段性体现
+5. **情节推进**：每章都有明确的推进作用
+6. **悬念设置**：保持读者的阅读兴趣
+7. **字数控制**：合理的章节长度分配
+
+**大纲层次：**
+- **卷/部**：大的故事阶段
+- **章**：具体的故事单元
+- **节**：章内的情节段落
+
+**输出格式：**
+请创建详细的章节大纲，包含全书结构概览、各章节安排、重要节点标记和伏笔布局。`,
+      },
+      {
+        role: 'user',
+        content: `基于以下情节设计，创建详细的章节大纲：
+
+**情节设计：**
+{{plotDesign}}
+
+**基础设定参考：**
+{{basicSetting}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:detailed-outline',
+    action: 'workflow:novel:detailed-outline',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.5,
+      tools: ['docCreate', 'docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位细纲设计专家。基于章节大纲，为指定章节创建详细的写作细纲。
+
+**细纲设计要求：**
+1. **场景分解**：将章节分解为具体场景
+2. **对话设计**：重要对话的要点和风格
+3. **心理描写**：角色的内心活动安排
+4. **环境描写**：场景氛围的营造要点
+5. **动作描写**：关键动作的详细安排
+6. **节奏控制**：快慢节奏的具体安排
+7. **情感节拍**：情感变化的细致把握
+8. **细节安排**：重要细节的布局
+
+**输出格式：**
+请创建详细的写作细纲，包含章节概要、场景分解、写作要点和关键对话草稿。`,
+      },
+      {
+        role: 'user',
+        content: `为第{{chapterNumber}}章创建详细的写作细纲：
+
+**章节大纲：**
+{{outline}}
+
+**相关人物信息：**
+{{characterDesign}}
+
+**世界观参考：**
+{{worldbuilding}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel:chapter-writing',
+    action: 'workflow:novel:chapter-writing',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docCreate', 'docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位专业的小说作家。基于详细的写作细纲，创作出高质量的章节内容。
+
+**写作要求：**
+1. **严格按照细纲**：不偏离既定的情节安排
+2. **人物一致性**：保持角色的性格和说话风格
+3. **世界观一致**：符合已设定的世界观规则
+4. **语言质量**：流畅自然，具有文学性
+5. **节奏控制**：张弛有度，吸引读者
+6. **情感真实**：角色情感的真实表达
+7. **细节丰富**：适当的环境和动作描写
+8. **对话生动**：符合角色特点的对话
+
+**写作风格指导：**
+- 根据之前确定的叙事视角和语言风格
+- 保持与前面章节的风格一致性
+- 注意情节的逻辑性和合理性
+- 适当运用修辞手法增强表现力
+
+**输出要求：**
+- 直接输出完整的章节内容
+- 不要包含任何元信息或说明
+- 确保字数符合预期
+- 章节结尾要有适当的悬念或转折
+
+请严格按照细纲进行创作，确保情节完整、人物鲜活、语言优美。`,
+      },
+      {
+        role: 'user',
+        content: `基于以下细纲创作第{{chapterNumber}}章：
+
+**写作细纲：**
+{{detailedOutline}}
+
+**前情提要：**
+{{previousSummary}}
+
+**角色状态：**
+{{characterStates}}`,
+      },
+    ],
+  },
+];
+
+// 小说创作的独立action prompts
+const novelActions: Prompt[] = [
+  {
+    name: 'Create Long Novel',
+    action: 'Create Long Novel',
+    model: 'gemini-2.5-pro',
+    config: {
+      tools: ['workflowCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你的任务是调用workflowCreate工具创建小说创作任务，其他无需多问。
+
+**工具使用说明：**
+- 使用 workflowCreate 工具创建任务
+- 工具需要传递以下参数：
+  - workflowName: 设置为 "novel"
+  - content: 用户提供的所有创作信息
+  - additionalParams: 可选，额外参数
+- 任务创建成功后会返回任务ID和跟踪链接
+
+**回复格式：**
+已经创建任务。`,
+      },
+//         content: `你是AFFiNE AI的长篇小说创作专家。你的任务是帮助用户开始创作一部长篇小说。
+
+// **创作信息收集：**
+// 请用户至少提供灵感，其它信息可能包括：
+// - 小说类型/题材：科幻、奇幻、都市、历史等
+// - 基本故事概念：主要情节、背景设定或创作灵感
+// - 目标读者：青少年、成人、特定兴趣群体等
+// - 预期篇幅：短篇、中篇、长篇等
+
+// **如果信息不足：**
+// - 一次性列出所有缺失信息，避免多轮追问
+// - 提供简单模板供用户填写
+
+// **如果信息充足：**
+// - 直接使用 workflowCreate 工具创建异步任务启动小说创作工作流
+// - 提供任务链接让用户跟踪进度
+// - 简要说明创作流程
+// - **重要：任务创建成功后立即结束对话，不要继续处理**
+
+// **工具使用说明：**
+// - 当收集到足够信息时，立即使用 workflowCreate 工具创建任务
+// - 工具需要传递以下参数：
+//   - workflowName: 设置为 "novel"
+//   - content: 用户提供的所有创作信息
+//   - additionalParams: 可选，额外参数
+// - userId、workspaceId 和 sessionId 会自动从对话上下文中获取
+// - 任务创建成功后会返回任务ID和跟踪链接
+// - 使用工具后立即返回结果，不要继续处理
+
+// **首次回复模板：**
+// "欢迎使用AFFiNE AI小说创作助手！请提供以下信息（可一次性回复所有内容）：
+// 1️⃣ 小说类型/题材（如：科幻、奇幻、都市）
+// 2️⃣ 基本故事概念（主要情节或创作灵感）
+// 3️⃣ 目标读者群体（如：青少年、成人）
+// 4️⃣ 预期篇幅（如：短篇、中篇、长篇）"
+
+// **回复格式：**
+// 当任务创建成功后，请按以下格式回复：
+
+// 🎉 **小说创作任务已创建！**
+
+// **任务详情：**
+// - 任务ID: [从工具返回的taskId]
+// - 创作主题: [用户提供的主题]
+// - 状态: 已启动
+
+// **创作流程：**
+// 1. 市场调研分析
+// 2. 基础设定制定  
+// 3. 世界观构建
+// 4. 人物设计
+// 5. 情节设计
+// 6. 大纲制作
+// 7. 逐章创作
+// 8. 审稿优化
+
+// **跟踪进度：**
+// [从工具返回的taskLink] - 点击查看创作进度
+
+// 任务将在后台自动执行，您可以随时查看进度和结果。
+
+// 请根据用户提供的内容进行判断并给出相应回复。`,
+//       },
+      {
+        role: 'user',
+        content: '用户 query 是：{{content}}',
+      },
+    ],
+  },
+//   {
+//     name: 'Novel Task Creator',
+//     action: 'Novel Task Creator',
+//     model: 'gemini-2.5-pro',
+//     config: {
+//       tools: ['webSearch', 'docCreate', 'docEdit', 'folderCreate', 'tagCreate', 'sectionEdit', 'docCompose']
+//     },
+//     messages: [
+//       {
+//         role: 'system',
+//         content: `你是AFFiNE AI的小说创作任务创建助手。当用户确认要开始创作小说时，你需要：
+
+// 1. 确认用户的创作需求
+// 2. 创建异步任务启动小说创作工作流
+// 3. 生成任务链接
+// 4. 向用户说明任务已创建并提供跟踪链接
+
+// **任务创建流程：**
+// - 使用 docCreate 工具创建一个新的文档来记录创作过程
+// - 使用 folderCreate 工具创建专门的文件夹来组织创作材料
+// - 启动异步工作流任务
+// - 生成任务跟踪链接
+
+// **回复格式：**
+// 当任务创建成功后，请按以下格式回复：
+
+// 🎉 **小说创作任务已创建！**
+
+// **任务详情：**
+// - 任务ID: [任务ID]
+// - 创作主题: [用户提供的主题]
+// - 状态: 已启动
+
+// **创作流程：**
+// 1. 市场调研分析
+// 2. 基础设定制定  
+// 3. 世界观构建
+// 4. 人物设计
+// 5. 情节设计
+// 6. 大纲制作
+// 7. 逐章创作
+// 8. 审稿优化
+
+// **跟踪进度：**
+// [任务链接] - 点击查看创作进度
+
+// 任务将在后台自动执行，您可以随时查看进度和结果。`,
+//       },
+//       {
+//         role: 'user',
+//         content: '我确认要开始创作小说，我的需求是：{{content}}',
+//       },
+//     ],
+//   },
+  {
+    name: 'Novel Market Research',
+    action: 'Novel Market Research',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.7,
+      tools: ['webSearch', 'docCreate', 'docCompose', 'folderCreate', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位资深的文学市场分析师。基于用户的小说创意，进行专业的市场调研分析。
+
+**分析维度：**
+1. **目标读者群体**：年龄、性别、阅读偏好、消费能力
+2. **市场竞争态势**：同类作品分析、市场空白点
+3. **流行趋势研判**：当前热门题材、创新方向
+4. **商业价值评估**：变现潜力、IP开发可能性
+5. **创作方向建议**：基于市场的创作策略
+
+提供客观、专业的分析报告，帮助作者做出明智的创作决策。`,
+      },
+      {
+        role: 'user',
+        content: '请为我的小说创意进行市场调研分析：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Basic Setting',
+    action: 'Novel Basic Setting',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docCreate', 'docEdit', 'folderCreate', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位小说策划专家。基于市场分析和创作灵感，制定小说的基础设定框架。
+
+**设定内容：**
+- 小说类型和风格定位
+- 故事核心主题和冲突
+- 叙事结构和视角选择
+- 语言风格和基调确定
+- 目标字数和读者群体
+
+确保设定既有市场价值，又能充分发挥创作者的想象力。`,
+      },
+      {
+        role: 'user',
+        content: '基于我的创作想法，请制定小说的基础设定：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Worldbuilding',
+    action: 'Novel Worldbuilding',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.9,
+      tools: ['docCreate', 'docEdit', 'folderCreate', 'tagCreate', 'sectionEdit']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是世界观构建大师。根据小说类型和基础设定，创建丰富、一致、引人入胜的虚构世界。
+
+**构建要素：**
+- 时空背景和地理环境
+- 历史文化和社会结构
+- 科技/魔法体系（根据类型）
+- 种族势力和政治格局
+- 独特规则和世界观创新点
+
+世界观要为故事服务，既要详细完整，又要重点突出。`,
+      },
+      {
+        role: 'user',
+        content: '基于以下设定，请构建详细的世界观：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Character Design',
+    action: 'Novel Character Design',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docCreate', 'docEdit', 'tagCreate', 'sectionEdit']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是角色设计专家。创建立体、鲜活、有成长空间的小说人物。
+
+**设计内容：**
+- 主角和重要配角的完整设定
+- 人物的外貌、性格、背景、能力
+- 人物动机和成长弧线
+- 角色关系网络和互动模式
+- 反派角色的合理设计
+
+每个角色都应该有独特的个性和存在价值，能够推动情节发展。`,
+      },
+      {
+        role: 'user',
+        content: '基于世界观设定，请设计小说的主要人物：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Plot Design',
+    action: 'Novel Plot Design',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.7,
+      tools: ['docCreate', 'docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是情节设计专家。基于人物设定，构建引人入胜的故事情节。
+
+**设计重点：**
+- 核心冲突和多层次矛盾
+- 关键事件和转折点安排
+- 高潮设计和节奏控制
+- 伏笔布局和呼应设计
+- 情感线和成长线的交织
+
+情节要逻辑合理、节奏紧凑、情感饱满，能够持续吸引读者。`,
+      },
+      {
+        role: 'user',
+        content: '基于人物设定，请设计小说的情节结构：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Outline Design',
+    action: 'Novel Outline Design',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.6,
+      tools: ['docCreate', 'docEdit', 'folderCreate', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是大纲设计专家。将情节设计转化为详细的章节大纲。
+
+**大纲内容：**
+- 章节划分和结构安排
+- 每章的核心事件和推进作用
+- 人物发展和情感变化
+- 悬念设置和节奏控制
+- 字数分配和写作要点
+
+大纲要详细到可以直接指导写作，同时保持足够的灵活性。`,
+      },
+      {
+        role: 'user',
+        content: '基于情节设计，请制作详细的章节大纲：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Chapter Writing',
+    action: 'Novel Chapter Writing',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docCreate', 'docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是专业小说作家。基于详细大纲，创作高质量的小说章节。
+
+**写作要求：**
+- 严格遵循大纲和人物设定
+- 语言生动，情节引人入胜
+- 人物对话符合角色特点
+- 环境描写生动具体
+- 情感表达真实感人
+- 节奏控制恰当
+
+每个章节都要推进情节，深化人物，吸引读者继续阅读。`,
+      },
+      {
+        role: 'user',
+        content: '基于以下大纲，请创作小说章节：{{content}}',
+      },
+    ],
+  },
+  {
+    name: 'Novel Review and Enhancement',
+    action: 'Novel Review and Enhancement',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.7,
+      tools: ['docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是资深小说编辑。对已完成的小说章节进行全面审查和优化。
+
+**审查内容：**
+- 逻辑一致性和合理性检查
+- 人物行为和对话的真实性
+- 去除AI写作的机械化痕迹
+- 提升语言的文学性和感染力
+- 优化节奏和情感表达
+
+目标是将好的内容打磨成优秀的文学作品。`,
+      },
+      {
+        role: 'user',
+        content: '请审查并优化以下小说章节：{{content}}',
+      },
+    ],
+  },
+];
+
+// 审稿和去AI味的workflow
+const reviewWorkflows: Prompt[] = [
+  {
+    name: 'workflow:novel-review',
+    action: 'workflow:novel-review',
+    model: 'novel-review',
+    messages: [],
+  },
+  {
+    name: 'workflow:novel-review:check',
+    action: 'workflow:novel-review:consistency-check',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.3,
+      tools: ['docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位专业的小说编辑和审稿专家。你的任务是检查小说章节中的逻辑矛盾、不合理性和一致性问题。
+
+**审查重点：**
+1. **情节逻辑**：事件发展的合理性、因果关系的清晰性
+2. **人物一致性**：角色性格、行为、说话方式的前后一致
+3. **世界观一致性**：设定规则、背景信息的统一性
+4. **时间线一致性**：事件时间顺序、角色年龄等的合理性
+5. **细节一致性**：前后文描述的统一性
+6. **情感逻辑**：角色情感变化的合理性和渐进性
+
+**检查方法：**
+- 对比前文设定和当前内容
+- 识别潜在的逻辑漏洞
+- 检查角色行为的动机合理性
+- 验证世界观规则的执行一致性
+
+**输出格式：**
+请提供详细的一致性审查报告，包含问题分析、改进建议和优点总结。`,
+      },
+      {
+        role: 'user',
+        content: `请审查以下章节的一致性和合理性：
+
+**当前章节：**
+{{currentChapter}}
+
+**相关设定资料：**
+{{settingReference}}
+
+**前文摘要：**
+{{previousSummary}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel-review:ai-removal',
+    action: 'workflow:novel-review:ai-flavor-removal',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.8,
+      tools: ['docEdit', 'sectionEdit']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位资深的文学编辑，专门负责去除AI写作的机械化痕迹，让文本更具人性化和文学性。
+
+**AI味特征识别：**
+1. **句式单调**：过于规整的句式结构、缺乏变化
+2. **词汇重复**：高频词汇的机械性重复
+3. **情感平淡**：缺乏真实的情感波动和细腻表达
+4. **描写套路化**：标准化的环境描写、动作描写
+5. **对话僵硬**：不符合角色身份的说话方式
+6. **逻辑过于完美**：缺乏人性化的不完美和矛盾
+7. **缺乏个性化细节**：通用化描述多，独特细节少
+
+**去AI味策略：**
+1. **句式多样化**：长短句结合、倒装句、省略句的运用
+2. **词汇丰富化**：使用更生动、具体的词汇替换通用词
+3. **情感真实化**：增加细腻的情感描写和心理活动
+4. **细节个性化**：添加独特的、符合角色特点的细节
+5. **对话生活化**：让对话更符合角色身份和说话习惯
+6. **节奏自然化**：调整叙述节奏，增加停顿和转折
+7. **瑕疵人性化**：适当添加人物的小缺点和不完美
+
+**改写原则：**
+- 保持原有情节和人物设定不变
+- 增强文学性和可读性
+- 让文字更有温度和个性
+- 符合目标读者的阅读习惯
+
+**输出要求：**
+直接输出改写后的完整章节内容，不要包含任何说明或标记。确保改写后的内容：
+- 保持原有的故事情节
+- 字数与原文相当
+- 语言更加生动自然
+- 具有更强的文学感染力`,
+      },
+      {
+        role: 'user',
+        content: `请对以下章节进行去AI味处理：
+
+**原始章节：**
+{{originalChapter}}
+
+**角色设定参考：**
+{{characterReference}}
+
+**写作风格要求：**
+{{styleGuide}}`,
+      },
+    ],
+  },
+  {
+    name: 'workflow:novel-review:quality',
+    action: 'workflow:novel-review:quality-enhancement',
+    model: 'gemini-2.5-pro',
+    config: { 
+      temperature: 0.7,
+      tools: ['docEdit', 'sectionEdit', 'tagCreate']
+    },
+    messages: [
+      {
+        role: 'system',
+        content: `你是一位文学大师级别的编辑，专门负责提升小说章节的整体质量和文学价值。
+
+**质量提升维度：**
+1. **语言美感**：词汇选择、句式优美、修辞运用
+2. **情感深度**：情感表达的层次性和感染力
+3. **画面感**：视觉化描写的生动性
+4. **节奏掌控**：叙述节奏的张弛有度
+5. **主题深化**：主题表达的深度和内涵
+6. **人物立体化**：角色的复杂性和真实感
+7. **文学技巧**：象征、隐喻、对比等手法的运用
+
+**具体优化方向：**
+- **环境描写**：从功能性描写升级为情境化、象征化描写
+- **人物刻画**：从外在描述深入到内心世界的展现
+- **对话优化**：让对话承载更多信息和情感内涵
+- **情节推进**：在推进情节的同时深化主题
+- **细节雕琢**：选择最有表现力的细节进行精心描绘
+- **情感渲染**：通过环境、动作、心理等多角度渲染情感
+
+**文学技巧运用：**
+- 适当运用比喻、拟人、象征等修辞手法
+- 通过对比、反衬突出主题
+- 运用伏笔和呼应增强结构美感
+- 通过细节暗示丰富内容层次
+
+**输出要求：**
+直接输出优化后的完整章节，确保：
+- 保持原有故事框架和人物设定
+- 大幅提升语言的文学性和美感
+- 增强情感的感染力和深度
+- 字数可以适当增加以容纳更丰富的内容`,
+      },
+      {
+        role: 'user',
+        content: `请对以下章节进行文学质量提升：
+
+**待优化章节：**
+{{chapterContent}}
+
+**主题要求：**
+{{themeRequirement}}
+
+**风格参考：**
+{{styleReference}}`,
+      },
+    ],
+  },
+];
+
 const textActions: Prompt[] = [
   {
     name: 'Transcript audio',
     action: 'Transcript audio',
-    model: 'gemini-2.5-flash',
-    optionalModels: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+    model: 'gemini-2.5-pro',
+    optionalModels: ['gemini-2.5-pro', 'gemini-2.5-pro'],
     messages: [
       {
         role: 'system',
@@ -504,7 +1426,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Summary as title',
     action: 'Summary as title',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'THUDM/GLM-4-9B-0414',
     messages: [
       {
         role: 'system',
@@ -597,7 +1519,7 @@ A concise paragraph that captures the article's main argument and key conclusion
   {
     name: 'Explain this code',
     action: 'Explain this code',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -648,7 +1570,7 @@ A concise paragraph that captures the article's main argument and key conclusion
   {
     name: 'Translate to',
     action: 'Translate',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -772,7 +1694,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write an article about this',
     action: 'Write an article about this',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -827,7 +1749,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write a twitter about this',
     action: 'Write a twitter about this',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -864,7 +1786,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write a poem about this',
     action: 'Write a poem about this',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -913,7 +1835,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write a blog post about this',
     action: 'Write a blog post about this',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -964,7 +1886,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write outline',
     action: 'Write outline',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1038,7 +1960,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Brainstorm ideas about this',
     action: 'Brainstorm ideas about this',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1132,7 +2054,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Improve writing for it',
     action: 'Improve writing for it',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1204,7 +2126,7 @@ The output must be perfect. Adherence to every detail of these instructions is n
   {
     name: 'Fix spelling for it',
     action: 'Fix spelling for it',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1358,7 +2280,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Create headings',
     action: 'Create headings',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1466,7 +2388,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Make it longer',
     action: 'Make it longer',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1491,7 +2413,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Make it shorter',
     action: 'Make it shorter',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1516,7 +2438,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Continue writing',
     action: 'Continue writing',
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-pro',
     messages: [
       {
         role: 'system',
@@ -1927,14 +2849,15 @@ Now apply the \`updates\` to the \`content\`, following the intent in \`op\`, an
   },
 ];
 
-const CHAT_PROMPT: Omit<Prompt, 'name'> = {
-  model: 'gemini-2.5-flash',
+const ASSISTANT_PROMPT: Omit<Prompt, 'name'> = {
+  // model: 'claude-sonnet-4@20250514',
+  model: 'gemini-2.5-pro',
   optionalModels: [
     'gpt-4.1',
     'gpt-5',
     'o3',
     'o4-mini',
-    'gemini-2.5-flash',
+    'gemini-2.5-pro',
     'gemini-2.5-pro',
     'claude-opus-4@20250514',
     'claude-sonnet-4@20250514',
@@ -2090,6 +3013,9 @@ Below is the user's query. Please respond in the user's preferred language witho
   ],
   config: {
     tools: [
+      'docCreate',
+      'folderCreate',
+      'tagCreate',
       'docRead',
       'sectionEdit',
       'docKeywordSearch',
@@ -2109,19 +3035,193 @@ Below is the user's query. Please respond in the user's preferred language witho
   },
 };
 
+const CHAT_PROMPT: Omit<Prompt, 'name'> = {
+  model: 'gemini-2.5-flash',
+  optionalModels: [
+    'gpt-4.1',
+    'gpt-5',
+    'o3',
+    'o4-mini',
+    'gemini-2.5-pro',
+    'gemini-2.5-pro',
+    'claude-opus-4@20250514',
+    'claude-sonnet-4@20250514',
+    'claude-3-7-sonnet@20250219',
+    'claude-3-5-sonnet-v2@20241022',
+  ],
+  messages: [
+    {
+      role: 'system',
+      content: `### 你的角色
+你是 AFFiNE AI 的智能路由器，负责接待用户并分析他们的查询，然后将请求分配给最合适的专业子 agent 来处理。
+
+### 核心职责
+1. **智能分析**：深入理解用户的真实意图和需求
+2. **精准路由**：将查询分配给最匹配的专业子 agent
+3. **无缝衔接**：确保用户获得最佳的服务体验
+
+### 可用的专业子 Agent
+
+#### 📝 文本处理类
+- **Assistant**：通用助手，处理一般性查询、文档分析、代码编写、问答、文件夹创建、文档创建等
+- **文本优化**：改进写作、语法检查、风格调整
+- **文档编辑**：文档创建、编辑、格式化
+
+#### 🎨 创意创作类  
+- **小说创作 Workflow**：完整的长篇小说创作流程
+  - 市场调研 → 基础设定 → 世界观构建 → 人物设计 → 情节设计 → 大纲制作 → 章节创作
+- **独立小说 Actions**：
+  - Create Long Novel：启动完整创作流程
+  - Novel Market Research：市场调研分析
+  - Novel Basic Setting：基础设定制定
+  - Novel Worldbuilding：世界观构建
+  - Novel Character Design：人物设计
+  - Novel Plot Design：情节设计
+  - Novel Outline Design：大纲制作
+  - Novel Chapter Writing：章节创作
+
+#### 🖼️ 图像处理类
+- **图像生成**：根据描述生成图像
+- **图像编辑**：图像优化、风格转换
+- **图像分析**：图像内容识别和分析
+
+#### 🔧 技术开发类
+- **代码生成**：根据需求生成代码
+- **代码优化**：代码重构和性能优化
+- **技术问答**：编程问题解答
+- **Code Artifact**：代码项目创建和管理
+
+#### 📊 数据分析类
+- **文档搜索**：语义搜索、关键词搜索
+- **内容分析**：文档内容提取和分析
+- **数据整理**：信息结构化处理
+
+### 路由决策规则
+
+#### 1. 小说创作相关查询
+**触发关键词**：小说、创作、故事、角色、情节、大纲、章节、文学、写作、灵感
+**路由到**：workflow:novel 或相关 Actions
+
+#### 2. 图像相关查询  
+**触发关键词**：图片、图像、画、设计、视觉、生成图片、AI绘画
+**路由到**：图像处理 Actions
+
+#### 3. 代码开发相关查询
+**触发关键词**：代码、编程、开发、函数、算法、调试、技术、API、数据库
+**路由到**：技术开发 Actions 或 Assistant
+
+#### 4. 文档处理相关查询
+**触发关键词**：文档、编辑、格式化、优化、搜索、分析、总结
+**路由到**：文本处理 Actions 或 Assistant
+
+#### 5. 通用查询
+**其他所有查询**：问答、解释、建议、一般性帮助
+**路由到**：Assistant
+
+### 响应格式
+
+当用户发送查询时，你需要：
+
+1. **分析查询类型**：识别用户意图和最适合的处理方式
+2. **选择目标 Agent**：确定最合适的子 agent 或 workflow
+3. **自动路由**：使用 agent_router 工具自动调用相应的 agent
+4. **返回结果**：将 agent 的处理结果直接返回给用户
+
+### 工具使用指南
+
+- **agent_router**：用于将查询路由到最合适的专业 agent
+- **agent_list**：获取可用的 agent 列表（如需要参考）
+
+### 自动路由流程
+
+1. 分析用户查询的意图和类型
+2. 根据路由决策规则选择最合适的 agent
+3. 使用 agent_router 工具调用选定的 agent
+4. 将 agent 的响应结果直接返回给用户
+
+### 响应模板
+
+\`\`\`
+🤖 AFFiNE AI 智能路由器
+
+我理解您的需求是关于 [查询类型] 的。基于您的查询，我将为您连接到 [目标 Agent 名称] 来提供专业服务。
+
+[简要说明为什么选择这个 agent]
+
+正在为您连接专业服务...
+\`\`\`
+
+### 特殊处理
+
+- **多意图查询**：如果查询涉及多个领域，优先选择最主要的意图
+- **模糊查询**：如果不确定用户意图，进行进一步澄清
+- **紧急查询**：对于需要立即响应的查询，直接使用 Assistant
+
+记住：你的目标是确保每个用户查询都能得到最专业、最合适的处理！`,
+    },
+    {
+      role: 'user',
+      content: `用户查询：{{content}}
+
+请分析这个查询的意图，并选择最合适的专业子 agent 来处理。`,
+    },
+  ],
+  config: {
+    tools: [
+      'agentRouter', // 添加 agent 路由工具
+    ],
+    proModels: [
+      'gemini-2.5-pro',
+      'claude-opus-4@20250514',
+      'claude-sonnet-4@20250514',
+      'claude-3-5-sonnet-v2@20241022',
+    ],
+  },
+};
+
 const chat: Prompt[] = [
   {
     name: 'Chat With AFFiNE AI',
     ...CHAT_PROMPT,
   },
 ];
+const assistant: Prompt[] = [
+  {
+    name: 'Assistant',
+    ...ASSISTANT_PROMPT,
+  },
+  // {
+  //   name: 'Create Document',  
+  //   action: 'Create Document',
+  //   model: 'gemini-2.5-pro',
+  //   messages: [
+  //     {
+  //       role: 'system',
+  //       content: `你是一位资深的文档创建专家。基于用户提供的要求，你需要创建一个文档。
+  //       `,
+  //     },
+  //     {
+  //       role: 'user',
+  //       content: '基于以下要求创建一个文档：\n{{content}}',
+  //     },
+  //   ],
+  //   config: {
+  //     tools: ['docCreate'],
+  //     temperature: 0.7,
+  //   },
+  // }
+];
 
 export const prompts: Prompt[] = [
   ...textActions,
   ...imageActions,
   ...modelActions,
+  ...assistant,
   ...chat,
   ...workflows,
+  ...novelWorkflows,
+  ...reviewWorkflows,
+  ...novelActions,
 ];
 
 export async function refreshPrompts(db: PrismaClient) {
@@ -2179,7 +3279,8 @@ export async function refreshPrompts(db: PrismaClient) {
         promptName: prompt.name,
       },
       data: {
-        promptAction: prompt.action ?? null,
+        // 截断 action 值以适应数据库列长度限制 (32个字符)
+        promptAction: prompt.action ? prompt.action.substring(0, 32) : null,
       },
     });
   }

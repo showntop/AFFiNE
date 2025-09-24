@@ -66,22 +66,24 @@ defineModuleConfig('copilot', {
   'providers.openai': {
     desc: 'The config for the openai provider.',
     default: {
-      apiKey: '',
-      baseURL: 'https://api.openai.com/v1',
+      apiKey: process.env.OPENAI_API_KEY ?? '',
+      baseURL: process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1',
     },
     link: 'https://github.com/openai/openai-node',
   },
   'providers.fal': {
     desc: 'The config for the fal provider.',
     default: {
-      apiKey: '',
+      apiKey: process.env.FAL_API_KEY ?? '',
     },
   },
   'providers.gemini': {
     desc: 'The config for the gemini provider.',
     default: {
-      apiKey: '',
-      baseURL: 'https://generativelanguage.googleapis.com/v1beta',
+      apiKey: process.env.GEMINI_API_KEY ?? '',
+      baseURL:
+        process.env.GEMINI_BASE_URL ??
+        'https://generativelanguage.googleapis.com/v1beta',
     },
   },
   'providers.geminiVertex': {
@@ -92,14 +94,14 @@ defineModuleConfig('copilot', {
   'providers.perplexity': {
     desc: 'The config for the perplexity provider.',
     default: {
-      apiKey: '',
+      apiKey: process.env.PERPLEXITY_API_KEY ?? '',
     },
   },
   'providers.anthropic': {
     desc: 'The config for the anthropic provider.',
     default: {
-      apiKey: '',
-      baseURL: 'https://api.anthropic.com/v1',
+      apiKey: process.env.ANTHROPIC_API_KEY ?? '',
+      baseURL: process.env.ANTHROPIC_BASE_URL ?? 'https://api.anthropic.com/v1',
     },
   },
   'providers.anthropicVertex': {
@@ -114,13 +116,13 @@ defineModuleConfig('copilot', {
   unsplash: {
     desc: 'The config for the unsplash key.',
     default: {
-      key: '',
+      key: process.env.UNSPLASH_API_KEY ?? '',
     },
   },
   exa: {
     desc: 'The config for the exa web search key.',
     default: {
-      key: '',
+      key: process.env.EXA_API_KEY ?? '',
     },
   },
   storage: {

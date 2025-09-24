@@ -240,8 +240,9 @@ export class ChatPanel extends SignalWatcher(
 
   private readonly newSession = () => {
     this.resetPanel();
-    requestAnimationFrame(() => {
+    requestAnimationFrame(async () => {
       this.session = null;
+      await this.createSession();
     });
   };
 

@@ -36,8 +36,10 @@ export class ChatPanelChips extends SignalWatcher(
       display: flex;
       gap: 8px;
       align-items: center;
-      flex-wrap: wrap;
-      padding: 4px 12px;
+      flex-wrap: nowrap;
+      padding: 4px 12px 4px 0;
+      overflow-x: auto;
+      overflow-y: hidden;
 
       .collapse-button,
       .more-candidate-button {

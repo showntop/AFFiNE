@@ -19,6 +19,11 @@ declare global {
       workspaceId: string;
       docId: string;
     };
+    'doc.broadcast': {
+      workspaceId: string;
+      docId: string;
+      editor?: string;
+    };
   }
 }
 

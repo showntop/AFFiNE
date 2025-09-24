@@ -12,7 +12,6 @@ export const AFFINE_FLAGS = {
       'com.affine.settings.workspace.experimental-features.enable-ai.name',
     description:
       'com.affine.settings.workspace.experimental-features.enable-ai.description',
-    hide: true,
     configurable: true,
     defaultState: true,
   },
@@ -22,8 +21,7 @@ export const AFFINE_FLAGS = {
       'com.affine.settings.workspace.experimental-features.enable-ai-network-search.name',
     description:
       'com.affine.settings.workspace.experimental-features.enable-ai-network-search.description',
-    hide: true,
-    configurable: false,
+    configurable: true,
     defaultState: true,
   },
   enable_ai_playground: {

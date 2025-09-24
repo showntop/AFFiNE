@@ -1,4 +1,5 @@
 import './ai-chat-composer-tip';
+import './ai-chat-quick-actions';
 
 import type {
   AIDraftService,
@@ -22,7 +23,7 @@ import type {
   NotificationService,
 } from '@blocksuite/affine-shared/services';
 import { css, html, type PropertyValues } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 
 import {
   type AIChatParams,
@@ -156,20 +157,14 @@ export class AIChatComposer extends SignalWatcher(
 
   private _pollEmbeddingStatusAbortController: AbortController | null = null;
 
+  @query('ai-chat-input')
+  accessor aiChatInput: HTMLElement | null = null;
+
   override render() {
     return html`
-      <chat-panel-chips
-        .chips=${this.chips}
-        .isCollapsed=${this.isChipsCollapsed}
-        .independentMode=${this.independentMode}
-        .addChip=${this.addChip}
-        .updateChip=${this.updateChip}
-        .removeChip=${this.removeChip}
-        .toggleCollapse=${this.toggleChipsCollapse}
-        .docDisplayConfig=${this.docDisplayConfig}
-        .portalContainer=${this.portalContainer}
-        .addImages=${this.addImages}
-      ></chat-panel-chips>
+      <ai-chat-quick-actions
+        .onTemplateSelect=${this._handleTemplateSelect}
+      ></ai-chat-quick-actions>
       <ai-chat-input
         .independentMode=${this.independentMode}
         .host=${this.host}
@@ -178,6 +173,10 @@ export class AIChatComposer extends SignalWatcher(
         .session=${this.session}
         .chips=${this.chips}
         .addChip=${this.addChip}
+        .updateChip=${this.updateChip}
+        .removeChip=${this.removeChip}
+        .toggleChipsCollapse=${this.toggleChipsCollapse}
+        .isChipsCollapsed=${this.isChipsCollapsed}
         .addImages=${this.addImages}
         .createSession=${this.createSession}
         .chatContextValue=${this.chatContextValue}
@@ -781,6 +780,14 @@ export class AIChatComposer extends SignalWatcher(
   private readonly _abortPollEmbeddingStatus = () => {
     this._pollEmbeddingStatusAbortController?.abort();
     this._pollEmbeddingStatusAbortController = null;
+  };
+
+  private readonly _handleTemplateSelect = (template: string) => {
+    // 通过 AIProvider 的 slots 来设置输入内容
+    AIProvider.slots.requestOpenWithChat.next({
+      input: template,
+      host: this.host,
+    });
   };
 
   private readonly initComposer = async () => {

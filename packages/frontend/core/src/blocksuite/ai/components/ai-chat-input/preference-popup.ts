@@ -7,6 +7,7 @@ import {
 } from '@blocksuite/affine/components/context-menu';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
 import {
+  AiOutlineIcon,
   ArrowDownSmallIcon,
   CloudWorkspaceIcon,
   ThinkingIcon,
@@ -97,20 +98,20 @@ export class ChatInputPreference extends SignalWatcher(
     const searchItems = [];
 
     // model switch
-    // modelItems.push(
-    //   menu.subMenu({
-    //     name: 'Model',
-    //     prefix: AiOutlineIcon(),
-    //     options: {
-    //       items: (this.session?.optionalModels ?? []).map(modelId => {
-    //         return menu.action({
-    //           name: modelId,
-    //           select: () => this._onModelChange(modelId),
-    //         });
-    //       }),
-    //     },
-    //   })
-    // );
+    modelItems.push(
+      menu.subMenu({
+        name: 'Model',
+        prefix: AiOutlineIcon(),
+        options: {
+          items: (this.session?.optionalModels ?? []).map(modelId => {
+            return menu.action({
+              name: modelId,
+              select: () => this.onModelChange?.(modelId),
+            });
+          }),
+        },
+      })
+    );
 
     modelItems.push(
       menu.toggleSwitch({
@@ -169,7 +170,7 @@ export class ChatInputPreference extends SignalWatcher(
       data-testid="chat-input-preference-trigger"
       class="chat-input-preference-trigger"
     >
-      <span class="chat-input-preference-trigger-label"> Claude </span>
+      <span class="chat-input-preference-trigger-label"> ${this.modelId} </span>
       <span class="chat-input-preference-trigger-icon">
         ${ArrowDownSmallIcon()}
       </span>

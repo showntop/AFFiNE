@@ -27,6 +27,7 @@ import {
   PromptsManagementResolver,
   UserCopilotResolver,
 } from './resolver';
+import { AgentCallerService } from './agent/agent-caller.service';
 import { ChatSessionService } from './session';
 import { CopilotStorage } from './storage';
 import {
@@ -34,6 +35,7 @@ import {
   CopilotTranscriptionService,
 } from './transcript';
 import { CopilotWorkflowExecutors, CopilotWorkflowService } from './workflow';
+import { CopilotWorkflowJob } from './job/copilot-workflow-job';
 import {
   CopilotWorkspaceEmbeddingConfigResolver,
   CopilotWorkspaceEmbeddingResolver,
@@ -60,9 +62,13 @@ import {
     ChatMessageCache,
     PromptService,
     CopilotStorage,
+    // agent
+    AgentCallerService,
     // workflow
     CopilotWorkflowService,
     ...CopilotWorkflowExecutors,
+    // jobs
+    CopilotWorkflowJob,
     // context
     CopilotContextResolver,
     CopilotContextService,

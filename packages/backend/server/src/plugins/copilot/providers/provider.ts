@@ -7,31 +7,44 @@ import {
   Config,
   CopilotPromptInvalid,
   CopilotProviderNotSupported,
+  EventBus,
+  JobQueue,
   OnEvent,
 } from '../../../base';
 import { DocReader } from '../../../core/doc';
+import { PgWorkspaceDocStorageAdapter } from '../../../core/doc/adapters/workspace';
 import { AccessController } from '../../../core/permission';
 import { Models } from '../../../models';
 import { IndexerService } from '../../indexer';
 import { CopilotContextService } from '../context';
 import { PromptService } from '../prompt';
+import { AgentCallerService } from '../agent/agent-caller.service';
 import {
   buildBlobContentGetter,
   buildContentGetter,
   buildDocContentGetter,
   buildDocKeywordSearchGetter,
   buildDocSearchGetter,
+  buildWorkflowCreator,
+  createAgentListTool,
+  createAgentRouterTool,
   createBlobReadTool,
   createCodeArtifactTool,
   createConversationSummaryTool,
   createDocComposeTool,
+  createDocCreateTool,
+  buildDocCreator,
   createDocEditTool,
   createDocKeywordSearchTool,
   createDocReadTool,
   createDocSemanticSearchTool,
   createExaCrawlTool,
   createExaSearchTool,
+  createFolderCreateTool,
+  buildFolderCreator,
+  createWorkflowCreateTool,
   createSectionEditTool,
+  createTagCreateTool,
 } from '../tools';
 import { CopilotProviderFactory } from './factory';
 import {
@@ -64,6 +77,8 @@ export abstract class CopilotProvider<C = any> {
   @Inject() protected readonly AFFiNEConfig!: Config;
   @Inject() protected readonly factory!: CopilotProviderFactory;
   @Inject() protected readonly moduleRef!: ModuleRef;
+  @Inject() protected readonly docStorageAdapter!: PgWorkspaceDocStorageAdapter;
+  @Inject() protected readonly eventBus!: EventBus;
 
   get config(): C {
     return this.AFFiNEConfig.copilot.providers[this.type] as C;
@@ -100,16 +115,17 @@ export abstract class CopilotProvider<C = any> {
     cond: ModelFullConditions
   ): CopilotProviderModel | undefined {
     const { modelId, outputType, inputTypes } = cond;
+    this.logger.debug(`inputTypes: ${inputTypes}`);
+    this.logger.debug(`outputType: ${outputType}`);
     const matcher = (cap: ModelCapability) =>
       (!outputType || cap.output.includes(outputType)) &&
       (!inputTypes?.length ||
         inputTypes.every(type => cap.input.includes(type)));
-
     if (modelId) {
       const hasOnlineModel = this.onlineModelList.includes(modelId);
 
       const model = this.models.find(
-        m => m.id === modelId && m.capabilities.some(matcher)
+        m => m.id === modelId // && m.capabilities.some(matcher) // TODO fix this inputTypes is undefined
       );
 
       if (model) return model;
@@ -126,7 +142,11 @@ export abstract class CopilotProvider<C = any> {
 
   // make it async to allow dynamic check available models in some providers
   async match(cond: ModelFullConditions = {}): Promise<boolean> {
-    return this.configured() && !!this.findValidModel(cond);
+    if (!this.configured()) {
+      return false;
+    }
+    
+    return !!this.findValidModel(cond);
   }
 
   protected selectModel(cond: ModelFullConditions): CopilotProviderModel {
@@ -253,8 +273,44 @@ export abstract class CopilotProvider<C = any> {
             tools.doc_compose = createDocComposeTool(prompt, this.factory);
             break;
           }
+          case 'docCreate': {
+            const createDoc = buildDocCreator(ac, models.doc, this.docStorageAdapter, this.eventBus);
+            tools.doc_create = createDocCreateTool(
+              prompt, 
+              this.factory, 
+              createDoc.bind(null, options)
+            );
+            break;
+          }
+          case 'folderCreate': {
+            const createFolder = buildFolderCreator(ac, models.doc, this.docStorageAdapter, this.moduleRef);
+            tools.folder_create = createFolderCreateTool(
+              prompt, 
+              this.factory, 
+              createFolder.bind(null, options)
+            );
+            break;
+          }
+          case 'tagCreate': {
+            tools.tag_create = createTagCreateTool();
+            break;
+          }
           case 'sectionEdit': {
             tools.section_edit = createSectionEditTool(prompt, this.factory);
+            break;
+          }
+          case 'agentRouter': {
+            const agentCaller = this.moduleRef.get(AgentCallerService, { strict: false });
+            tools.agent_router = createAgentRouterTool(agentCaller, options);
+            tools.agent_list = createAgentListTool(agentCaller);
+            break;
+          }
+          case 'workflowCreate': {
+            const jobQueue = this.moduleRef.get(JobQueue, { strict: false });
+            const createWorkflow = buildWorkflowCreator(jobQueue);
+            tools.workflow_create = createWorkflowCreateTool(
+              createWorkflow.bind(null, options)
+            );
             break;
           }
         }
