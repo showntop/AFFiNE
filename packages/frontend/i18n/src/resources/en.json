@@ -2288,5 +2288,13 @@
   "com.affine.adminSettings.copilot.storage.desc": "The storage provider for copilot blobs",
   "com.affine.adminSettings.copilot.storage.bucket.desc": "The bucket name for copilot blobs storage",
   "com.affine.adminSettings.copilot.storage.config.desc": "The config passed directly to the storage provider(e.g. aws-sdk)",
-  "com.affine.adminSettings.copilot.enabled.desc": "Whether to enable the copilot plugin. <br> Document: <a href=\"https://docs.affine.pro/self-host-affine/administer/ai\" target=\"_blank\">https://docs.affine.pro/self-host-affine/administer/ai</a>"
+  "com.affine.adminSettings.copilot.enabled.desc": "Whether to enable the copilot plugin. <br> Document: <a href=\"https://docs.affine.pro/self-host-affine/administer/ai\" target=\"_blank\">https://docs.affine.pro/self-host-affine/administer/ai</a>",
+  "com.affine.adminSettings.copilot.providerSelector.title": "AI Provider Configuration",
+  "com.affine.adminSettings.copilot.providerSelector.description": "Select the AI service provider to configure, then edit its configuration below",
+  "com.affine.adminSettings.copilot.providerSelector.configLabel": "{{provider}} Configuration (JSON)",
+  "com.affine.adminSettings.copilot.providerSelector.configPath": "Config Path",
+  "com.affine.adminSettings.copilot.providerSelector.viewDocs": "View Docs",
+  "com.affine.adminSettings.copilot.providerSelector.jsonError": "JSON format error: {{error}}",
+  "com.affine.adminSettings.copilot.providerSelector.placeholder": "Enter {{provider}} configuration (JSON format)\n\nExample:\n{\n  \"apiKey\": \"your-api-key\",\n  \"baseURL\": \"https://api.example.com\"\n}",
+  "com.affine.adminSettings.copilot.providerSelector.configured": "Configured Providers ({{count}})"
 }

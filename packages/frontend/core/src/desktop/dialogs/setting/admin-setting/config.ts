@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 
 import CONFIG_DESCRIPTORS from './config.json';
 import type { ConfigInputProps } from './config-input-row';
+import { ProviderSelector } from './provider-selector';
 // import { SendTestEmail } from './operations/send-test-email';
 
 export type ConfigType = 'String' | 'Number' | 'Boolean' | 'JSON' | 'Enum';
@@ -152,26 +153,6 @@ export const KNOWN_CONFIG_GROUPS = [
         desc: 'com.affine.adminSettings.copilot.scenarios',
       },
       {
-        key: 'providers.openai',
-        desc: 'com.affine.adminSettings.copilot.providers.openai',
-      },
-      {
-        key: 'providers.gemini',
-        desc: 'com.affine.adminSettings.copilot.providers.gemini',
-      },
-      {
-        key: 'providers.perplexity',
-        desc: 'com.affine.adminSettings.copilot.providers.perplexity',
-      },
-      {
-        key: 'providers.anthropic',
-        desc: 'com.affine.adminSettings.copilot.providers.anthropic',
-      },
-      {
-        key: 'providers.fal',
-        desc: 'com.affine.adminSettings.copilot.providers.fal',
-      },
-      {
         key: 'unsplash',
         desc: 'com.affine.adminSettings.copilot.unsplash',
       },
@@ -199,6 +180,7 @@ export const KNOWN_CONFIG_GROUPS = [
         desc: 'com.affine.adminSettings.copilot.storage.config.desc',
       },
     ],
+    operations: [ProviderSelector],
   } as ConfigGroup<'copilot'>,
 ];
 

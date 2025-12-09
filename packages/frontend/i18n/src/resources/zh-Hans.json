@@ -2286,5 +2286,13 @@
   "com.affine.adminSettings.copilot.storage.desc": "Copilot Blob 的存储提供商",
   "com.affine.adminSettings.copilot.storage.bucket.desc": "Copilot Blob 存储的桶名称",
   "com.affine.adminSettings.copilot.storage.config.desc": "直接传递给存储提供商的配置（例如 aws-sdk）",
-  "com.affine.adminSettings.copilot.enabled.desc": "是否启用 Copilot 插件。<br> 文档：<a href=\"https://docs.affine.pro/self-host-affine/administer/ai\" target=\"_blank\">https://docs.affine.pro/self-host-affine/administer/ai</a>"
+  "com.affine.adminSettings.copilot.enabled.desc": "是否启用 Copilot 插件。<br> 文档：<a href=\"https://docs.affine.pro/self-host-affine/administer/ai\" target=\"_blank\">https://docs.affine.pro/self-host-affine/administer/ai</a>",
+  "com.affine.adminSettings.copilot.providerSelector.title": "AI Provider 配置",
+  "com.affine.adminSettings.copilot.providerSelector.description": "选择要配置的 AI 服务提供商，然后在下方编辑其配置",
+  "com.affine.adminSettings.copilot.providerSelector.configLabel": "{{provider}} 配置 (JSON)",
+  "com.affine.adminSettings.copilot.providerSelector.configPath": "配置路径",
+  "com.affine.adminSettings.copilot.providerSelector.viewDocs": "查看文档",
+  "com.affine.adminSettings.copilot.providerSelector.jsonError": "JSON 格式错误：{{error}}",
+  "com.affine.adminSettings.copilot.providerSelector.placeholder": "请输入 {{provider}} 的配置 (JSON 格式)\n\n例如：\n{\n  \"apiKey\": \"your-api-key\",\n  \"baseURL\": \"https://api.example.com\"\n}",
+  "com.affine.adminSettings.copilot.providerSelector.configured": "已配置的 Providers ({{count}})"
 }
