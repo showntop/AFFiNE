@@ -2272,5 +2272,21 @@
   "com.affine.adminSettings.group.indexer": "Indexer",
   "com.affine.adminSettings.group.customerIo": "Customer.io",
   "com.affine.adminSettings.group.payment": "Payment",
-  "com.affine.adminSettings.group.worker": "Worker"
+  "com.affine.adminSettings.group.worker": "Worker",
+  "com.affine.adminSettings.copilot.enabled": "Enable Copilot Plugin",
+  "com.affine.adminSettings.copilot.scenarios": "Scenarios",
+  "com.affine.adminSettings.copilot.providers.openai": "OpenAI Provider",
+  "com.affine.adminSettings.copilot.providers.gemini": "Gemini Provider",
+  "com.affine.adminSettings.copilot.providers.perplexity": "Perplexity Provider",
+  "com.affine.adminSettings.copilot.providers.anthropic": "Anthropic Provider",
+  "com.affine.adminSettings.copilot.providers.fal": "Fal Provider",
+  "com.affine.adminSettings.copilot.unsplash": "Unsplash",
+  "com.affine.adminSettings.copilot.exa": "Exa",
+  "com.affine.adminSettings.copilot.storage.provider": "Storage Provider",
+  "com.affine.adminSettings.copilot.storage.bucket": "Storage Bucket",
+  "com.affine.adminSettings.copilot.storage.config": "Storage Config",
+  "com.affine.adminSettings.copilot.storage.desc": "The storage provider for copilot blobs",
+  "com.affine.adminSettings.copilot.storage.bucket.desc": "The bucket name for copilot blobs storage",
+  "com.affine.adminSettings.copilot.storage.config.desc": "The config passed directly to the storage provider(e.g. aws-sdk)",
+  "com.affine.adminSettings.copilot.enabled.desc": "Whether to enable the copilot plugin. <br> Document: <a href=\"https://docs.affine.pro/self-host-affine/administer/ai\" target=\"_blank\">https://docs.affine.pro/self-host-affine/administer/ai</a>"
 }

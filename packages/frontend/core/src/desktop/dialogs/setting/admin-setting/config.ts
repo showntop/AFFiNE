@@ -143,18 +143,45 @@ export const KNOWN_CONFIG_GROUPS = [
     name: 'com.affine.adminSettings.group.copilot',
     module: 'copilot',
     fields: [
-      'enabled',
-      'scenarios',
-      'providers.openai',
-      'providers.gemini',
-      'providers.perplexity',
-      'providers.anthropic',
-      'providers.fal',
-      'unsplash',
-      'exa',
+      {
+        key: 'enabled',
+        desc: 'com.affine.adminSettings.copilot.enabled.desc',
+      },
+      {
+        key: 'scenarios',
+        desc: 'com.affine.adminSettings.copilot.scenarios',
+      },
+      {
+        key: 'providers.openai',
+        desc: 'com.affine.adminSettings.copilot.providers.openai',
+      },
+      {
+        key: 'providers.gemini',
+        desc: 'com.affine.adminSettings.copilot.providers.gemini',
+      },
+      {
+        key: 'providers.perplexity',
+        desc: 'com.affine.adminSettings.copilot.providers.perplexity',
+      },
+      {
+        key: 'providers.anthropic',
+        desc: 'com.affine.adminSettings.copilot.providers.anthropic',
+      },
+      {
+        key: 'providers.fal',
+        desc: 'com.affine.adminSettings.copilot.providers.fal',
+      },
+      {
+        key: 'unsplash',
+        desc: 'com.affine.adminSettings.copilot.unsplash',
+      },
+      {
+        key: 'exa',
+        desc: 'com.affine.adminSettings.copilot.exa',
+      },
       {
         key: 'storage',
-        desc: 'The storage provider for copilot blobs',
+        desc: 'com.affine.adminSettings.copilot.storage.desc',
         sub: 'provider',
         type: 'Enum',
         options: ['fs', 'aws-s3', 'cloudflare-r2'],
@@ -163,13 +190,13 @@ export const KNOWN_CONFIG_GROUPS = [
         key: 'storage',
         sub: 'bucket',
         type: 'String',
-        desc: 'The bucket name for copilot blobs storage',
+        desc: 'com.affine.adminSettings.copilot.storage.bucket.desc',
       },
       {
         key: 'storage',
         sub: 'config',
         type: 'JSON',
-        desc: 'The config passed directly to the storage provider(e.g. aws-sdk)',
+        desc: 'com.affine.adminSettings.copilot.storage.config.desc',
       },
     ],
   } as ConfigGroup<'copilot'>,

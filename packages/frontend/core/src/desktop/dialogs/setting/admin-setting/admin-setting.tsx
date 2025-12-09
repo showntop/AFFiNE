@@ -75,7 +75,8 @@ export const AdminSetting = ({ groupKey }: AdminSettingProps) => {
           let props: ConfigInputProps;
           if (typeof field === 'string') {
             const descriptor = ALL_CONFIG_DESCRIPTORS[module][field];
-            desc = descriptor.desc;
+            // @ts-ignore
+            desc = t[descriptor.desc] ? t[descriptor.desc]() : descriptor.desc;
             props = {
               field: `${module}/${field}`,
               desc,
@@ -86,9 +87,12 @@ export const AdminSetting = ({ groupKey }: AdminSettingProps) => {
             };
           } else {
             const descriptor = ALL_CONFIG_DESCRIPTORS[module][field.key];
+            const descKey = field.desc ?? descriptor.desc;
+            // @ts-ignore
+            const translatedDesc = t[descKey] ? t[descKey]() : descKey;
             props = {
               field: `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`,
-              desc: field.desc ?? descriptor.desc,
+              desc: translatedDesc,
               type: field.type ?? descriptor.type,
               // @ts-expect-error for enum type
               options: field.options,

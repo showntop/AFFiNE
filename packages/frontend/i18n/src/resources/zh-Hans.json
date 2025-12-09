@@ -2270,5 +2270,21 @@
   "com.affine.adminSettings.group.indexer": "索引器",
   "com.affine.adminSettings.group.customerIo": "Customer.io",
   "com.affine.adminSettings.group.payment": "支付",
-  "com.affine.adminSettings.group.worker": "Worker"
+  "com.affine.adminSettings.group.worker": "Worker",
+  "com.affine.adminSettings.copilot.enabled": "启用 Copilot 插件",
+  "com.affine.adminSettings.copilot.scenarios": "场景",
+  "com.affine.adminSettings.copilot.providers.openai": "OpenAI 提供商",
+  "com.affine.adminSettings.copilot.providers.gemini": "Gemini 提供商",
+  "com.affine.adminSettings.copilot.providers.perplexity": "Perplexity 提供商",
+  "com.affine.adminSettings.copilot.providers.anthropic": "Anthropic 提供商",
+  "com.affine.adminSettings.copilot.providers.fal": "Fal 提供商",
+  "com.affine.adminSettings.copilot.unsplash": "Unsplash",
+  "com.affine.adminSettings.copilot.exa": "Exa",
+  "com.affine.adminSettings.copilot.storage.provider": "存储提供商",
+  "com.affine.adminSettings.copilot.storage.bucket": "存储桶",
+  "com.affine.adminSettings.copilot.storage.config": "存储配置",
+  "com.affine.adminSettings.copilot.storage.desc": "Copilot Blob 的存储提供商",
+  "com.affine.adminSettings.copilot.storage.bucket.desc": "Copilot Blob 存储的桶名称",
+  "com.affine.adminSettings.copilot.storage.config.desc": "直接传递给存储提供商的配置（例如 aws-sdk）",
+  "com.affine.adminSettings.copilot.enabled.desc": "是否启用 Copilot 插件。<br> 文档：<a href=\"https://docs.affine.pro/self-host-affine/administer/ai\" target=\"_blank\">https://docs.affine.pro/self-host-affine/administer/ai</a>"
 }
