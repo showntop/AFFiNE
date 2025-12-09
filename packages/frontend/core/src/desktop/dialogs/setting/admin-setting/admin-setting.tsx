@@ -70,44 +70,70 @@ export const AdminSetting = ({ groupKey }: AdminSettingProps) => {
       </div>
 
       <SettingWrapper>
-        {fields.map(field => {
-          let desc: string;
-          let props: ConfigInputProps;
-          if (typeof field === 'string') {
-            const descriptor = ALL_CONFIG_DESCRIPTORS[module][field];
-            // @ts-ignore
-            desc = t[descriptor.desc] ? t[descriptor.desc]() : descriptor.desc;
-            props = {
-              field: `${module}/${field}`,
-              desc,
-              type: descriptor.type,
-              options: [],
-              defaultValue: get(patchedAppConfig[module], field),
-              onChange: update,
-            };
-          } else {
-            const descriptor = ALL_CONFIG_DESCRIPTORS[module][field.key];
-            const descKey = field.desc ?? descriptor.desc;
-            // @ts-ignore
-            const translatedDesc = t[descKey] ? t[descKey]() : descKey;
-            props = {
-              field: `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`,
-              desc: translatedDesc,
-              type: field.type ?? descriptor.type,
-              // @ts-expect-error for enum type
-              options: field.options,
-              defaultValue: get(
-                patchedAppConfig[module],
-                field.key + (field.sub ? '.' + field.sub : '')
-              ),
-              onChange: update,
-            };
-          }
-          return <ConfigRow key={props.field} {...props} />;
-        })}
-        {operations?.map((Operation: any) => (
-          <Operation key={Operation.name} appConfig={patchedAppConfig} />
-        ))}
+        {fields
+          .flatMap((field, index) => {
+            let desc: string;
+            let props: ConfigInputProps;
+            if (typeof field === 'string') {
+              const descriptor = ALL_CONFIG_DESCRIPTORS[module][field];
+              // @ts-ignore
+              desc = t[descriptor.desc]
+                ? t[descriptor.desc]()
+                : descriptor.desc;
+              props = {
+                field: `${module}/${field}`,
+                desc,
+                type: descriptor.type,
+                options: [],
+                defaultValue: get(patchedAppConfig[module], field),
+                onChange: update,
+              };
+            } else {
+              const descriptor = ALL_CONFIG_DESCRIPTORS[module][field.key];
+              const descKey = field.desc ?? descriptor.desc;
+              // @ts-ignore
+              const translatedDesc = t[descKey] ? t[descKey]() : descKey;
+              props = {
+                field: `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`,
+                desc: translatedDesc,
+                type: field.type ?? descriptor.type,
+                // @ts-expect-error for enum type
+                options: field.options,
+                defaultValue: get(
+                  patchedAppConfig[module],
+                  field.key + (field.sub ? '.' + field.sub : '')
+                ),
+                onChange: update,
+              };
+            }
+
+            const row = <ConfigRow key={props.field} {...props} />;
+            // 特殊：copilot 模块在第一个开关（enabled）后插入 AI Provider 配置区块
+            if (module === 'copilot' && index === 0 && operations?.length) {
+              return [
+                row,
+                ...operations.map((Operation: any) => (
+                  <Operation
+                    key={Operation.name}
+                    appConfig={patchedAppConfig}
+                    patchedAppConfig={patchedAppConfig}
+                    update={update}
+                  />
+                )),
+              ];
+            }
+            return [row];
+          })
+          .flat()}
+        {module !== 'copilot' &&
+          operations?.map((Operation: any) => (
+            <Operation
+              key={Operation.name}
+              appConfig={patchedAppConfig}
+              patchedAppConfig={patchedAppConfig}
+              update={update}
+            />
+          ))}
       </SettingWrapper>
     </>
   );

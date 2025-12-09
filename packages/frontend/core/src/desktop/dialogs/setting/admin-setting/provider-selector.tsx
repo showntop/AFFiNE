@@ -1,4 +1,3 @@
-import { SettingRow } from '@affine/component/setting-components';
 import { Button } from '@affine/component/ui/button';
 import { Menu, MenuItem, MenuTrigger } from '@affine/component/ui/menu';
 import { useI18n } from '@affine/i18n';
@@ -6,7 +5,6 @@ import { ArrowDownSmallIcon } from '@blocksuite/icons/rc';
 import { useCallback, useMemo, useState } from 'react';
 
 import type { AppConfig } from './config';
-import { useAppConfig } from './use-app-config';
 
 const AI_PROVIDERS = [
   {
@@ -37,11 +35,16 @@ const AI_PROVIDERS = [
 
 interface ProviderSelectorProps {
   appConfig: AppConfig;
+  patchedAppConfig: AppConfig;
+  update: (field: string, value: any) => void;
 }
 
-export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
+export const ProviderSelector = ({
+  appConfig,
+  patchedAppConfig,
+  update,
+}: ProviderSelectorProps) => {
   const t = useI18n();
-  const { patchedAppConfig, update } = useAppConfig();
   const copilotConfig = patchedAppConfig?.copilot || appConfig?.copilot;
   const providersConfig = copilotConfig?.providers || {};
 
@@ -53,7 +56,7 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
     );
   }, [providersConfig]);
 
-  const [selectedProvider, setSelectedProvider] = useState(
+  const [selectedProvider, setSelectedProvider] = useState<string>(
     configuredProviders[0]?.key || AI_PROVIDERS[0].key
   );
 
@@ -61,7 +64,8 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
 
   const currentProviderConfig = providersConfig[selectedProvider];
   const currentProvider = AI_PROVIDERS.find(p => p.key === selectedProvider);
-  const currentProviderLabel = currentProvider?.label || selectedProvider;
+  const currentProviderLabel =
+    selectedProvider && currentProvider ? currentProvider.label : '请选择';
 
   const handleProviderChange = useCallback((providerKey: string) => {
     setSelectedProvider(providerKey);
@@ -160,8 +164,9 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
             align: 'start',
           }}
         >
-          <MenuTrigger style={{ width: '100%' }}>
-            {/* <Button
+          {/* @ts-expect-error asChild works at runtime though not in types */}
+          <MenuTrigger asChild style={{ width: '100%' }}>
+            <Button
               variant="plain"
               style={{
                 border: '1px solid var(--affine-border-color)',
@@ -173,11 +178,14 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
                 minWidth: '240px',
                 justifyContent: 'space-between',
                 background: 'var(--affine-background-primary-color)',
+                color: 'var(--affine-text-primary-color)',
               }}
-            > */}
-            <span style={{ fontWeight: 500 }}>{currentProviderLabel}</span>
-            {/* <ArrowDownSmallIcon /> */}
-            {/* </Button> */}
+            >
+              <span style={{ fontWeight: 500 }}>
+                {currentProviderLabel || '请选择'}
+              </span>
+              <ArrowDownSmallIcon />
+            </Button>
           </MenuTrigger>
         </Menu>
       </div>
@@ -199,13 +207,10 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
               color: 'var(--affine-text-primary-color)',
             }}
           >
-            {/* @ts-ignore */}
-            {t['com.affine.adminSettings.copilot.providerSelector.configLabel']
-              ? // @ts-ignore
-                t[
-                  'com.affine.adminSettings.copilot.providerSelector.configLabel'
-                ]({ provider: currentProviderLabel })
-              : `${currentProviderLabel} 配置 (JSON)`}
+            {(t as any)[
+              'com.affine.adminSettings.copilot.providerSelector.configLabel'
+            ]?.({ provider: currentProviderLabel }) ??
+              `${currentProviderLabel} 配置 (JSON)`}
           </div>
           {currentProvider?.link && (
             <a
@@ -237,13 +242,10 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
           }
           onChange={handleConfigChange}
           placeholder={
-            // @ts-ignore
-            t['com.affine.adminSettings.copilot.providerSelector.placeholder']
-              ? // @ts-ignore
-                t[
-                  'com.affine.adminSettings.copilot.providerSelector.placeholder'
-                ]({ provider: currentProviderLabel })
-              : `请输入 ${currentProviderLabel} 的配置 (JSON 格式)\n\n例如：\n{\n  "apiKey": "your-api-key",\n  "baseURL": "https://api.example.com"\n}`
+            (t as any)[
+              'com.affine.adminSettings.copilot.providerSelector.placeholder'
+            ]?.({ provider: currentProviderLabel }) ??
+            `请输入 ${currentProviderLabel} 的配置 (JSON 格式)\n\n例如：\n{\n  "apiKey": "your-api-key",\n  "baseURL": "https://api.example.com"\n}`
           }
           style={{
             width: '100%',
@@ -316,13 +318,10 @@ export const ProviderSelector = ({ appConfig }: ProviderSelectorProps) => {
               marginBottom: '8px',
             }}
           >
-            {/* @ts-ignore */}
-            {t['com.affine.adminSettings.copilot.providerSelector.configured']
-              ? // @ts-ignore
-                t[
-                  'com.affine.adminSettings.copilot.providerSelector.configured'
-                ]({ count: configuredProviders.length })
-              : `已配置的 Providers (${configuredProviders.length})`}
+            {(t as any)[
+              'com.affine.adminSettings.copilot.providerSelector.configured'
+            ]?.({ count: configuredProviders.length }) ??
+              `已配置的 Providers (${configuredProviders.length})`}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {configuredProviders.map(provider => (

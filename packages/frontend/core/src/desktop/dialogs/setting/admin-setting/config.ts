@@ -33,6 +33,8 @@ export type ConfigGroup<T extends AppConfigModule> = {
   >;
   operations?: ComponentType<{
     appConfig: AppConfig;
+    patchedAppConfig: AppConfig;
+    update: (field: string, value: any) => void;
   }>[];
 };
 const IGNORED_MODULES: (keyof AppConfig)[] = [];
