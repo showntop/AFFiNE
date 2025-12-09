@@ -11,6 +11,7 @@ import { track } from '@affine/track';
 import { Logo1Icon, SettingsIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import clsx from 'clsx';
+import { upperFirst } from 'lodash-es';
 import {
   type HTMLAttributes,
   type ReactNode,
@@ -214,13 +215,19 @@ export const SettingSidebar = ({
     if (isAdmin) {
       res.push({
         key: 'setting:admin',
-        title: 'Global Settings',
+        title: t['com.affine.adminSettings.title'](),
         items: ALL_SETTING_GROUPS.map(group => ({
           key: `admin:${group.module}`,
-          title: group.name,
+          // @ts-ignore
+          title: t[group.name]
+            ? t[group.name]()
+            : group.name.startsWith('com.affine')
+              ? upperFirst(group.module)
+              : group.name,
           icon: <SettingsIcon />,
           isActive: activeTab === `admin:${group.module}`,
           testId: `admin-setting-${group.module}`,
+          'data-event-arg': `admin:${group.module}` as SettingTab,
           onClick: () => gotoTab(`admin:${group.module}` as SettingTab),
         })),
       });
