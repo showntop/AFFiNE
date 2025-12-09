@@ -31,6 +31,7 @@ import {
 import { flushSync } from 'react-dom';
 
 import { AccountSetting } from './account-setting';
+import { AdminSetting } from './admin-setting/admin-setting';
 import { GeneralSetting } from './general-setting';
 import { IssueFeedbackModal } from './issue-feedback-modal';
 import { SettingSidebar } from './setting-sidebar';
@@ -52,6 +53,8 @@ interface SettingProps extends ModalProps {
 
 const isWorkspaceSetting = (key: string): boolean =>
   key.startsWith('workspace:');
+
+const isAdminSetting = (key: string): boolean => key.startsWith('admin:');
 
 const CenteredLoading = () => {
   return (
@@ -218,6 +221,10 @@ const SettingModalInner = ({
                       activeTab={settingState.activeTab}
                       onCloseSetting={onCloseSetting}
                       onChangeSettingState={setSettingState}
+                    />
+                  ) : isAdminSetting(settingState.activeTab) ? (
+                    <AdminSetting
+                      groupKey={settingState.activeTab.split(':')[1]}
                     />
                   ) : !isWorkspaceSetting(settingState.activeTab) ? (
                     <GeneralSetting

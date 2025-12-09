@@ -2,13 +2,13 @@ import { Scrollable } from '@affine/component';
 import { Avatar } from '@affine/component/ui/avatar';
 import { UserPlanButton } from '@affine/core/components/affine/auth/user-plan-button';
 import { useCatchEventCallback } from '@affine/core/components/hooks/use-catch-event-hook';
-import { AuthService } from '@affine/core/modules/cloud';
+import { AuthService, UserFeatureService } from '@affine/core/modules/cloud';
 import { GlobalDialogService } from '@affine/core/modules/dialogs';
 import type { SettingTab } from '@affine/core/modules/dialogs/constant';
 import { type WorkspaceMetadata } from '@affine/core/modules/workspace';
 import { useI18n } from '@affine/i18n';
 import { track } from '@affine/track';
-import { Logo1Icon } from '@blocksuite/icons/rc';
+import { Logo1Icon, SettingsIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import clsx from 'clsx';
 import {
@@ -19,6 +19,7 @@ import {
   useMemo,
 } from 'react';
 
+import { ALL_SETTING_GROUPS } from '../admin-setting/config';
 import { useGeneralSettingList } from '../general-setting';
 import { useWorkspaceSettingList } from '../workspace-setting';
 import * as style from './style.css';
@@ -169,6 +170,9 @@ export const SettingSidebar = ({
   const loginStatus = useLiveData(useService(AuthService).session.status$);
   const generalList = useGeneralSettingList();
   const workspaceSettingList = useWorkspaceSettingList();
+  const userFeatureService = useService(UserFeatureService);
+  const isAdmin = useLiveData(userFeatureService.userFeature.isAdmin$);
+
   const gotoTab = useCallback(
     (tab: SettingTab) => {
       track.$.settingsPanel.menu.openSettings({ to: tab });
@@ -206,8 +210,24 @@ export const SettingSidebar = ({
         }),
       };
     });
+
+    if (isAdmin) {
+      res.push({
+        key: 'setting:admin',
+        title: 'Global Settings',
+        items: ALL_SETTING_GROUPS.map(group => ({
+          key: `admin:${group.module}`,
+          title: group.name,
+          icon: <SettingsIcon />,
+          isActive: activeTab === `admin:${group.module}`,
+          testId: `admin-setting-${group.module}`,
+          onClick: () => gotoTab(`admin:${group.module}` as SettingTab),
+        })),
+      });
+    }
+
     return res;
-  }, [activeTab, generalList, gotoTab, t, workspaceSettingList]);
+  }, [activeTab, generalList, gotoTab, t, workspaceSettingList, isAdmin]);
 
   return (
     <div className={style.settingSlideBar} data-testid="settings-sidebar">
