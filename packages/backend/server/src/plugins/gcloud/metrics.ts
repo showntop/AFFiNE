@@ -1,10 +1,7 @@
 import { TraceExporter } from '@google-cloud/opentelemetry-cloud-trace-exporter';
 import { GcpDetectorSync } from '@google-cloud/opentelemetry-resource-util';
 import { Global, Injectable, Module, Provider } from '@nestjs/common';
-import {
-  type Resource,
-  resourceFromAttributes,
-} from '@opentelemetry/resources';
+import resources, { type Resource } from '@opentelemetry/resources';
 import { SpanExporter } from '@opentelemetry/sdk-trace-node';
 import {
   ATTR_CONTAINER_NAME,
@@ -12,6 +9,8 @@ import {
 } from '@opentelemetry/semantic-conventions/incubating';
 
 import { OpentelemetryOptionsFactory } from '../../base/metrics';
+
+const { resourceFromAttributes } = resources;
 
 @Injectable()
 export class GCloudOpentelemetryOptionsFactory extends OpentelemetryOptionsFactory {

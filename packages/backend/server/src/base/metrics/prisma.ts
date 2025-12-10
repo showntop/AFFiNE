@@ -1,6 +1,6 @@
 import { HrTime, ValueType } from '@opentelemetry/api';
 import { hrTime } from '@opentelemetry/core';
-import { emptyResource } from '@opentelemetry/resources';
+import resources from '@opentelemetry/resources';
 import {
   AggregationTemporality,
   CollectionResult,
@@ -10,6 +10,8 @@ import {
 } from '@opentelemetry/sdk-metrics';
 
 import { PrismaFactory } from '../prisma/factory';
+
+const { emptyResource } = resources;
 
 function transformPrismaKey(key: string) {
   // replace first '_' to '/' as a scope prefix

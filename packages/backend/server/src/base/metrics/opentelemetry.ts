@@ -13,7 +13,7 @@ import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { IORedisInstrumentation } from '@opentelemetry/instrumentation-ioredis';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { SocketIoInstrumentation } from '@opentelemetry/instrumentation-socket.io';
-import { resourceFromAttributes } from '@opentelemetry/resources';
+import resources from '@opentelemetry/resources';
 import { IMetricReader, MetricProducer } from '@opentelemetry/sdk-metrics';
 import { NodeSDK, NodeSDKConfiguration } from '@opentelemetry/sdk-node';
 import {
@@ -32,6 +32,8 @@ import { Config } from '../config';
 import { OnEvent } from '../event/def';
 import { registerCustomMetrics } from './metrics';
 import { PrismaMetricProducer } from './prisma';
+
+const { resourceFromAttributes } = resources;
 
 export abstract class BaseOpentelemetryOptionsFactory {
   abstract getMetricReader(): IMetricReader;
