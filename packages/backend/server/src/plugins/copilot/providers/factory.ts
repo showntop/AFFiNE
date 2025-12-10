@@ -75,4 +75,14 @@ export class CopilotProviderFactory {
       this.server.disableFeature(ServerFeature.Copilot);
     }
   }
+
+  getAllProviders() {
+    return Array.from(this.#providers.values()).map(provider => ({
+      type: provider.type,
+      models: provider.models.map(m => ({
+        ...m,
+        name: m.name || m.id,
+      })),
+    }));
+  }
 }

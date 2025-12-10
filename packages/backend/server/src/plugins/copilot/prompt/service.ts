@@ -86,6 +86,7 @@ export class PromptService implements OnApplicationBootstrap {
         name: true,
         action: true,
         model: true,
+        optionalModels: true,
         config: true,
         messages: {
           select: { role: true, content: true, params: true },
@@ -176,12 +177,13 @@ export class PromptService implements OnApplicationBootstrap {
     data: {
       messages?: PromptMessage[];
       model?: string;
+      optionalModels?: string[];
       modified?: boolean;
       config?: PromptConfig;
     },
     where?: Prisma.AiPromptWhereInput
   ) {
-    const { config, messages, model, modified } = data;
+    const { config, messages, model, optionalModels, modified } = data;
     const existing = await this.db.aiPrompt
       .count({ where: { ...where, name } })
       .then(count => count > 0);
@@ -193,6 +195,7 @@ export class PromptService implements OnApplicationBootstrap {
           updatedAt: new Date(),
           modified,
           model,
+          optionalModels,
           messages: messages
             ? {
                 // cleanup old messages

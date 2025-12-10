@@ -11,3 +11,9 @@ export const chatHeader = style({
   justifyContent: 'space-between',
   width: '100%',
 });
+
+export const builderActions = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+});

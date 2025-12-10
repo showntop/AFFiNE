@@ -156,6 +156,7 @@ export const getPromptsQuery = {
   listCopilotPrompts {
     name
     model
+    optionalModels
     action
     config {
       frequencyPenalty
@@ -175,10 +176,11 @@ export const getPromptsQuery = {
 export const updatePromptMutation = {
   id: 'updatePromptMutation' as const,
   op: 'updatePrompt',
-  query: `mutation updatePrompt($name: String!, $messages: [CopilotPromptMessageInput!]!) {
-  updateCopilotPrompt(name: $name, messages: $messages) {
+  query: `mutation updatePrompt($name: String!, $messages: [CopilotPromptMessageInput!]!, $model: String, $optionalModels: [String!], $config: CopilotPromptConfigInput) {
+  updateCopilotPrompt(name: $name, messages: $messages, model: $model, optionalModels: $optionalModels, config: $config) {
     name
     model
+    optionalModels
     action
     config {
       frequencyPenalty
@@ -1066,6 +1068,13 @@ export const getPromptModelsQuery = {
   query: `query getPromptModels($promptName: String!) {
   currentUser {
     copilot {
+      providers {
+        type
+        models {
+          id
+          name
+        }
+      }
       models(promptName: $promptName) {
         defaultModel
         optionalModels {

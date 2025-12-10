@@ -229,6 +229,9 @@ type Copilot {
   """List available models for a prompt, with human-readable names"""
   models(promptName: String!): CopilotModelsType!
 
+  """List all registered providers with their models"""
+  providers: [CopilotProviderWithModelsType!]!
+
   """Get the quota of the user in the workspace"""
   quota: CopilotQuota!
 
@@ -416,6 +419,7 @@ type CopilotPromptType {
   messages: [CopilotPromptMessageType!]!
   model: String!
   name: String!
+  optionalModels: [String!]!
 }
 
 type CopilotProviderNotSupportedDataType {
@@ -427,6 +431,11 @@ type CopilotProviderSideErrorDataType {
   kind: String!
   message: String!
   provider: String!
+}
+
+type CopilotProviderWithModelsType {
+  models: [CopilotModelType!]!
+  type: String!
 }
 
 type CopilotQuota {
@@ -1359,7 +1368,7 @@ type Mutation {
   updateComment(input: CommentUpdateInput!): Boolean!
 
   """Update a copilot prompt"""
-  updateCopilotPrompt(messages: [CopilotPromptMessageInput!]!, name: String!): CopilotPromptType!
+  updateCopilotPrompt(config: CopilotPromptConfigInput, messages: [CopilotPromptMessageInput!]!, model: String, name: String!, optionalModels: [String!]): CopilotPromptType!
 
   """Update a chat session"""
   updateCopilotSession(options: UpdateChatSessionInput!): String!

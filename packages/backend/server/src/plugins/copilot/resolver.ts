@@ -353,6 +353,9 @@ class CopilotPromptType {
   @Field(() => String)
   model!: string;
 
+  @Field(() => [String])
+  optionalModels!: string[];
+
   @Field(() => String, { nullable: true })
   action!: string | null;
 
@@ -370,6 +373,15 @@ class CopilotModelType {
 
   @Field(() => String)
   name!: string;
+}
+
+@ObjectType()
+class CopilotProviderWithModelsType {
+  @Field(() => String)
+  type!: string;
+
+  @Field(() => [CopilotModelType])
+  models!: CopilotModelType[];
 }
 
 @ObjectType()
@@ -481,9 +493,10 @@ export class CopilotResolver {
       throw new NotFoundException('Prompt not found');
     }
     const convertModels = (ids: string[]) => {
-      return ids
-        .map(id => ({ id, name: this.modelNames.get(id) }))
-        .filter(m => !!m.name) as CopilotModelType[];
+      return ids.map(id => {
+        const name = this.modelNames.get(id) || id;
+        return { id, name };
+      });
     };
     const proModels = prompt.config?.proModels || [];
     const missing = new Set(
@@ -508,6 +521,14 @@ export class CopilotResolver {
       optionalModels: convertModels(prompt.optionalModels),
       proModels: convertModels(proModels),
     };
+  }
+
+  @ResolveField(() => [CopilotProviderWithModelsType], {
+    name: 'providers',
+    description: 'List all registered providers with their models',
+  })
+  providers() {
+    return this.providerFactory.getAllProviders();
   }
 
   @ResolveField(() => CopilotSessionType, {
@@ -988,9 +1009,27 @@ export class PromptsManagementResolver {
   async updateCopilotPrompt(
     @Args('name') name: string,
     @Args('messages', { type: () => [CopilotPromptMessageType] })
-    messages: CopilotPromptMessageType[]
+    messages: CopilotPromptMessageType[],
+    @Args('model', { type: () => String, nullable: true })
+    model: string | null | undefined,
+    @Args('optionalModels', {
+      type: () => [String],
+      nullable: true,
+    })
+    optionalModels: (string | null)[] | null | undefined,
+    @Args('config', {
+      type: () => CopilotPromptConfigType,
+      nullable: true,
+    })
+    config: CopilotPromptConfigType | null | undefined
   ) {
-    await this.promptService.update(name, { messages, modified: true });
+    await this.promptService.update(name, {
+      messages,
+      modified: true,
+      model: model ?? undefined,
+      optionalModels: optionalModels?.filter(Boolean) as string[] | undefined,
+      config: config || undefined,
+    });
     return this.promptService.get(name);
   }
 }

@@ -1,4 +1,4 @@
-import { observeResize, useConfirmModal } from '@affine/component';
+import { Button, observeResize, useConfirmModal } from '@affine/component';
 import { CopilotClient } from '@affine/core/blocksuite/ai';
 import {
   AIChatContent,
@@ -21,6 +21,7 @@ import {
   EventSourceService,
   FetchService,
   GraphQLService,
+  ServerService,
   SubscriptionService,
 } from '@affine/core/modules/cloud';
 import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
@@ -36,6 +37,7 @@ import {
   WorkbenchService,
 } from '@affine/core/modules/workbench';
 import { WorkspaceService } from '@affine/core/modules/workspace';
+import { useI18n } from '@affine/i18n';
 import { RefNodeSlotsProvider } from '@blocksuite/affine/inlines/reference';
 import { BlockStdScope } from '@blocksuite/affine/std';
 import type { Workspace } from '@blocksuite/affine/store';
@@ -44,6 +46,7 @@ import { useFramework, useService } from '@toeverything/infra';
 import { nanoid } from 'nanoid';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { AgentBuilderModal, WorkflowBuilderModal } from './builder-modal';
 import * as styles from './index.css';
 
 type CopilotSession = Awaited<ReturnType<CopilotClient['getSession']>>;
@@ -88,6 +91,7 @@ function useMockStd() {
 
 export const Component = () => {
   const framework = useFramework();
+  const t = useI18n();
   const [isBodyProvided, setIsBodyProvided] = useState(false);
   const [isHeaderProvided, setIsHeaderProvided] = useState(false);
   const [chatContent, setChatContent] = useState<AIChatContent | null>(null);
@@ -98,6 +102,8 @@ export const Component = () => {
   const [status, setStatus] = useState<ChatStatus>('idle');
   const [isTogglingPin, setIsTogglingPin] = useState(false);
   const [isOpeningSession, setIsOpeningSession] = useState(false);
+  const [agentBuilderOpen, setAgentBuilderOpen] = useState(false);
+  const [workflowBuilderOpen, setWorkflowBuilderOpen] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const chatToolContainerRef = useRef<HTMLDivElement>(null);
   const widthSignalRef = useRef<Signal<number>>(signal(0));
@@ -231,6 +237,7 @@ export const Component = () => {
       confirmModal.closeConfirmModal,
       confirmModal.openConfirmModal
     );
+    content.serverService = framework.get(ServerService);
     content.aiDraftService = framework.get(AIDraftService);
     content.aiToolsConfigService = framework.get(AIToolsConfigService);
     content.subscriptionService = framework.get(SubscriptionService);
@@ -394,17 +401,36 @@ export const Component = () => {
 
   return (
     <>
-      <ViewTitle title="Intelligence" />
+      <ViewTitle title={t['com.affine.ai.chat.title']()} />
       <ViewIcon icon="ai" />
       <ViewHeader>
         <div className={styles.chatHeader}>
-          <div />
+          <div className={styles.builderActions}>
+            <Button size="default" onClick={() => setAgentBuilderOpen(true)}>
+              {t['com.affine.ai.builder.agent.title']()}
+            </Button>
+            <Button
+              size="default"
+              variant="primary"
+              onClick={() => setWorkflowBuilderOpen(true)}
+            >
+              {t['com.affine.ai.builder.workflow.title']()}
+            </Button>
+          </div>
           <div ref={onChatToolContainerRef} />
         </div>
       </ViewHeader>
       <ViewBody>
         <div className={styles.chatRoot} ref={onChatContainerRef} />
       </ViewBody>
+      <AgentBuilderModal
+        open={agentBuilderOpen}
+        onClose={() => setAgentBuilderOpen(false)}
+      />
+      <WorkflowBuilderModal
+        open={workflowBuilderOpen}
+        onClose={() => setWorkflowBuilderOpen(false)}
+      />
     </>
   );
 };

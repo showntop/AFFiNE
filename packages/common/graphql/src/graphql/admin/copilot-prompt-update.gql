@@ -1,10 +1,20 @@
 mutation updatePrompt(
   $name: String!
   $messages: [CopilotPromptMessageInput!]!
+  $model: String
+  $optionalModels: [String!]
+  $config: CopilotPromptConfigInput
 ) {
-  updateCopilotPrompt(name: $name, messages: $messages) {
+  updateCopilotPrompt(
+    name: $name
+    messages: $messages
+    model: $model
+    optionalModels: $optionalModels
+    config: $config
+  ) {
     name
     model
+    optionalModels
     action
     config {
       frequencyPenalty

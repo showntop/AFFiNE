@@ -263,6 +263,8 @@ export interface Copilot {
   contexts: Array<CopilotContext>;
   /** @deprecated use `chats` instead */
   histories: Array<CopilotHistories>;
+  /** List all registered providers with their models */
+  providers: Array<CopilotProviderWithModelsType>;
   /** List available models for a prompt, with human-readable names */
   models: CopilotModelsType;
   /** Get the quota of the user in the workspace */
@@ -300,6 +302,14 @@ export interface CopilotHistoriesArgs {
 
 export interface CopilotModelsArgs {
   promptName: Scalars['String']['input'];
+}
+
+export interface CopilotProvidersArgs {}
+
+export interface CopilotProviderWithModelsType {
+  __typename?: 'CopilotProviderWithModelsType';
+  models: Array<CopilotModelType>;
+  type: Scalars['String']['output'];
 }
 
 export interface CopilotSessionArgs {
@@ -1891,8 +1901,11 @@ export interface MutationUpdateCommentArgs {
 }
 
 export interface MutationUpdateCopilotPromptArgs {
+  config?: InputMaybe<CopilotPromptConfigInput>;
   messages: Array<CopilotPromptMessageInput>;
+  model?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
+  optionalModels?: InputMaybe<Array<Scalars['String']['input']>>;
 }
 
 export interface MutationUpdateCopilotSessionArgs {

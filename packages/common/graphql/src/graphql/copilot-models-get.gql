@@ -1,6 +1,13 @@
 query getPromptModels($promptName: String!) {
   currentUser {
     copilot {
+      providers {
+        type
+        models {
+          id
+          name
+        }
+      }
       models(promptName: $promptName) {
         defaultModel
         optionalModels {

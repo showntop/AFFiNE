@@ -75,6 +75,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
 
   override readonly models = [
     {
+      name: 'Flux 1 Schnell',
       id: 'flux-1/schnell',
       capabilities: [
         {
@@ -86,6 +87,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
     },
     // image to image models
     {
+      name: 'LCM SD15 I2I',
       id: 'lcm-sd15-i2i',
       capabilities: [
         {
@@ -96,6 +98,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
       ],
     },
     {
+      name: 'Clarity Upscaler',
       id: 'clarity-upscaler',
       capabilities: [
         {
@@ -105,6 +108,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
       ],
     },
     {
+      name: 'Face to Sticker',
       id: 'face-to-sticker',
       capabilities: [
         {
@@ -114,6 +118,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
       ],
     },
     {
+      name: 'Image Background Remover',
       id: 'imageutils/rembg',
       capabilities: [
         {
@@ -123,6 +128,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
       ],
     },
     {
+      name: 'Workflow TEED',
       id: 'workflowutils/teed',
       capabilities: [
         {
@@ -132,6 +138,7 @@ export class FalProvider extends CopilotProvider<FalConfig> {
       ],
     },
     {
+      name: 'LoRA Image-to-Image',
       id: 'lora/image-to-image',
       capabilities: [
         {

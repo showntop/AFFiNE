@@ -29,6 +29,7 @@ export class MorphProvider extends CopilotProvider<MorphConfig> {
 
   readonly models = [
     {
+      name: 'Morph V2',
       id: 'morph-v2',
       capabilities: [
         {
@@ -38,6 +39,7 @@ export class MorphProvider extends CopilotProvider<MorphConfig> {
       ],
     },
     {
+      name: 'Morph V3 Fast',
       id: 'morph-v3-fast',
       capabilities: [
         {
@@ -47,6 +49,7 @@ export class MorphProvider extends CopilotProvider<MorphConfig> {
       ],
     },
     {
+      name: 'Morph V3 Large',
       id: 'morph-v3-large',
       capabilities: [
         {
