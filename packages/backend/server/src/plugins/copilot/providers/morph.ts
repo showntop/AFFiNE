@@ -27,7 +27,7 @@ export type MorphConfig = {
 export class MorphProvider extends CopilotProvider<MorphConfig> {
   readonly type = CopilotProviderType.Morph;
 
-  readonly models = [
+  protected readonly _models = [
     {
       name: 'Morph V2',
       id: 'morph-v2',

@@ -13,7 +13,7 @@ export type GeminiVertexConfig = GoogleVertexProviderSettings;
 export class GeminiVertexProvider extends GeminiProvider<GeminiVertexConfig> {
   override readonly type = CopilotProviderType.GeminiVertex;
 
-  readonly models = [
+  protected readonly _models = [
     {
       name: 'Gemini 2.5 Flash',
       id: 'gemini-2.5-flash',

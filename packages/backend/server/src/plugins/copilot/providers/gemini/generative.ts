@@ -19,7 +19,7 @@ const ModelListSchema = z.object({
 export class GeminiGenerativeProvider extends GeminiProvider<GeminiGenerativeConfig> {
   override readonly type = CopilotProviderType.Gemini;
 
-  readonly models = [
+  protected readonly _models = [
     {
       name: 'Gemini 2.0 Flash',
       id: 'gemini-2.0-flash-001',

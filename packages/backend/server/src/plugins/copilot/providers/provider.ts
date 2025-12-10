@@ -58,8 +58,12 @@ export abstract class CopilotProvider<C = any> {
   protected readonly MAX_STEPS = 20;
   protected onlineModelList: string[] = [];
   abstract readonly type: CopilotProviderType;
-  abstract readonly models: CopilotProviderModel[];
+  protected abstract readonly _models: CopilotProviderModel[];
   abstract configured(): boolean;
+
+  get models(): CopilotProviderModel[] {
+    return this._models;
+  }
 
   @Inject() protected readonly AFFiNEConfig!: Config;
   @Inject() protected readonly factory!: CopilotProviderFactory;

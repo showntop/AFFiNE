@@ -19,7 +19,7 @@ const ModelListSchema = z.object({
 export class AnthropicOfficialProvider extends AnthropicProvider<AnthropicOfficialConfig> {
   override readonly type = CopilotProviderType.Anthropic;
 
-  override readonly models = [
+  protected override readonly _models = [
     {
       name: 'Claude Opus 4',
       id: 'claude-opus-4-20250514',

@@ -10,6 +10,7 @@ import {
 } from './providers/anthropic';
 import type { FalConfig } from './providers/fal';
 import { GeminiGenerativeConfig, GeminiVertexConfig } from './providers/gemini';
+import { GenericOpenAIConfig } from './providers/generic-openai';
 import { MorphConfig } from './providers/morph';
 import { OpenAIConfig } from './providers/openai';
 import { PerplexityConfig } from './providers/perplexity';
@@ -35,6 +36,7 @@ declare global {
         anthropic: ConfigItem<AnthropicOfficialConfig>;
         anthropicVertex: ConfigItem<AnthropicVertexConfig>;
         morph: ConfigItem<MorphConfig>;
+        genericOpenAI: ConfigItem<GenericOpenAIConfig>;
       };
     };
   }
@@ -70,6 +72,14 @@ defineModuleConfig('copilot', {
       baseURL: 'https://api.openai.com/v1',
     },
     link: 'https://github.com/openai/openai-node',
+  },
+  'providers.genericOpenAI': {
+    desc: 'The config for an OpenAI-compatible provider.',
+    default: {
+      apiKey: '',
+      baseURL: '',
+      models: [],
+    },
   },
   'providers.fal': {
     desc: 'The config for the fal provider.',

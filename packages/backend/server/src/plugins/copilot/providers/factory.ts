@@ -79,10 +79,12 @@ export class CopilotProviderFactory {
   getAllProviders() {
     return Array.from(this.#providers.values()).map(provider => ({
       type: provider.type,
-      models: provider.models.map(m => ({
-        ...m,
-        name: m.name || m.id,
-      })),
+      models: provider.models
+        .filter(m => !!m.id)
+        .map(m => ({
+          ...m,
+          name: m.name || m.id,
+        })),
     }));
   }
 }

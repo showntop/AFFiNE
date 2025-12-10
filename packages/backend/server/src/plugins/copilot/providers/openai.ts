@@ -88,7 +88,7 @@ const LogProbsSchema = z.array(
 export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
   readonly type = CopilotProviderType.OpenAI;
 
-  readonly models = [
+  protected readonly _models = [
     // Text to Text models
     {
       name: 'GPT 4o',

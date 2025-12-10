@@ -492,17 +492,19 @@ export class CopilotResolver {
     if (!prompt) {
       throw new NotFoundException('Prompt not found');
     }
+    const normalizeModelIds = (
+      ids?: Array<string | null | undefined>
+    ): string[] => (ids ?? []).filter((id): id is string => !!id);
     const convertModels = (ids: string[]) => {
       return ids.map(id => {
         const name = this.modelNames.get(id) || id;
         return { id, name };
       });
     };
-    const proModels = prompt.config?.proModels || [];
+    const optionalModels = normalizeModelIds(prompt.optionalModels);
+    const proModels = normalizeModelIds(prompt.config?.proModels);
     const missing = new Set(
-      [...prompt.optionalModels, ...proModels].filter(
-        id => !this.modelNames.has(id)
-      )
+      [...optionalModels, ...proModels].filter(id => !this.modelNames.has(id))
     );
     if (missing.size) {
       for (const model of missing) {
@@ -518,7 +520,7 @@ export class CopilotResolver {
 
     return {
       defaultModel: prompt.model,
-      optionalModels: convertModels(prompt.optionalModels),
+      optionalModels: convertModels(optionalModels),
       proModels: convertModels(proModels),
     };
   }

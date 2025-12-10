@@ -46,7 +46,7 @@ type PerplexityError = z.infer<typeof PerplexityErrorSchema>;
 export class PerplexityProvider extends CopilotProvider<PerplexityConfig> {
   readonly type = CopilotProviderType.Perplexity;
 
-  readonly models = [
+  protected readonly _models = [
     {
       name: 'Sonar',
       id: 'sonar',

@@ -2,36 +2,9 @@ import { Button } from '@affine/component/ui/button';
 import { Menu, MenuItem, MenuTrigger } from '@affine/component/ui/menu';
 import { useI18n } from '@affine/i18n';
 import { ArrowDownSmallIcon } from '@blocksuite/icons/rc';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { AppConfig } from './config';
-
-const AI_PROVIDERS = [
-  {
-    key: 'openai',
-    label: 'OpenAI',
-    link: 'https://github.com/openai/openai-node',
-  },
-  { key: 'anthropic', label: 'Anthropic', link: 'https://docs.anthropic.com' },
-  { key: 'gemini', label: 'Google Gemini', link: 'https://ai.google.dev' },
-  {
-    key: 'geminiVertex',
-    label: 'Google Gemini Vertex',
-    link: 'https://cloud.google.com/vertex-ai',
-  },
-  {
-    key: 'anthropicVertex',
-    label: 'Anthropic Vertex',
-    link: 'https://cloud.google.com/vertex-ai',
-  },
-  {
-    key: 'perplexity',
-    label: 'Perplexity',
-    link: 'https://docs.perplexity.ai',
-  },
-  { key: 'fal', label: 'Fal', link: 'https://fal.ai' },
-  { key: 'morph', label: 'Morph', link: '' },
-] as const;
 
 interface ProviderSelectorProps {
   appConfig: AppConfig;
@@ -48,24 +21,48 @@ export const ProviderSelector = ({
   const copilotConfig = patchedAppConfig?.copilot || appConfig?.copilot;
   const providersConfig = copilotConfig?.providers || {};
 
+  const providerEntries = useMemo(
+    () =>
+      Object.keys(providersConfig).map(key => ({
+        key,
+        label: key,
+        link:
+          typeof providersConfig[key]?.link === 'string'
+            ? providersConfig[key].link
+            : undefined,
+      })),
+    [providersConfig]
+  );
+
   // 找出当前已配置的 provider
   const configuredProviders = useMemo(() => {
-    return AI_PROVIDERS.filter(
-      p =>
-        providersConfig[p.key] && Object.keys(providersConfig[p.key]).length > 0
-    );
-  }, [providersConfig]);
+    return providerEntries.filter(({ key }) => {
+      const config = providersConfig[key];
+      return config && Object.keys(config).length > 0;
+    });
+  }, [providerEntries, providersConfig]);
 
   const [selectedProvider, setSelectedProvider] = useState<string>(
-    configuredProviders[0]?.key || AI_PROVIDERS[0].key
+    configuredProviders[0]?.key || providerEntries[0]?.key || ''
   );
+
+  useEffect(() => {
+    if (
+      providerEntries.length > 0 &&
+      !providerEntries.some(provider => provider.key === selectedProvider)
+    ) {
+      setSelectedProvider(providerEntries[0].key);
+    }
+  }, [providerEntries, selectedProvider]);
 
   const [jsonError, setJsonError] = useState<string>('');
 
-  const currentProviderConfig = providersConfig[selectedProvider];
-  const currentProvider = AI_PROVIDERS.find(p => p.key === selectedProvider);
+  const currentProviderConfig = selectedProvider
+    ? providersConfig[selectedProvider]
+    : undefined;
+  const currentProvider = providerEntries.find(p => p.key === selectedProvider);
   const currentProviderLabel =
-    selectedProvider && currentProvider ? currentProvider.label : '请选择';
+    currentProvider?.label || selectedProvider || '请选择';
 
   const handleProviderChange = useCallback((providerKey: string) => {
     setSelectedProvider(providerKey);
@@ -74,6 +71,10 @@ export const ProviderSelector = ({
 
   const handleConfigChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (!selectedProvider) {
+        setJsonError('请先选择要配置的 Provider');
+        return;
+      }
       const value = e.target.value;
       try {
         if (value.trim() === '') {
@@ -145,7 +146,7 @@ export const ProviderSelector = ({
             : '选择要配置的 AI 服务提供商，然后在下方编辑其配置'}
         </div>
         <Menu
-          items={AI_PROVIDERS.map(provider => (
+          items={providerEntries.map(provider => (
             <MenuItem
               key={provider.key}
               onSelect={() => handleProviderChange(provider.key)}
@@ -302,7 +303,7 @@ export const ProviderSelector = ({
               fontFamily: 'monospace',
             }}
           >
-            copilot.providers.{selectedProvider}
+            copilot.providers.{selectedProvider || '<provider>'}
           </code>
         </div>
       </div>

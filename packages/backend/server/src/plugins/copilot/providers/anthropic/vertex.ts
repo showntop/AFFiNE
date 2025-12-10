@@ -13,7 +13,7 @@ export type AnthropicVertexConfig = GoogleVertexAnthropicProviderSettings;
 export class AnthropicVertexProvider extends AnthropicProvider<AnthropicVertexConfig> {
   override readonly type = CopilotProviderType.AnthropicVertex;
 
-  override readonly models = [
+  protected override readonly _models = [
     {
       name: 'Claude Opus 4',
       id: 'claude-opus-4@20250514',

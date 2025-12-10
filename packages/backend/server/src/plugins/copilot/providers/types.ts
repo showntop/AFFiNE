@@ -11,6 +11,7 @@ export enum CopilotProviderType {
   FAL = 'fal',
   Gemini = 'gemini',
   GeminiVertex = 'geminiVertex',
+  GenericOpenAI = 'genericOpenAI',
   OpenAI = 'openai',
   Perplexity = 'perplexity',
   Morph = 'morph',

@@ -73,7 +73,7 @@ type FalPrompt = {
 export class FalProvider extends CopilotProvider<FalConfig> {
   override type = CopilotProviderType.FAL;
 
-  override readonly models = [
+  protected override readonly _models = [
     {
       name: 'Flux 1 Schnell',
       id: 'flux-1/schnell',
