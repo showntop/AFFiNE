@@ -34,13 +34,13 @@ export class PromptService implements OnApplicationBootstrap {
 
   @OnEvent('config.init')
   async onConfigInit() {
-    await this.setup(this.config.copilot?.scenarios);
+    // await this.setup(this.config.copilot?.scenarios);
   }
 
   @OnEvent('config.changed')
   async onConfigChanged(event: Events['config.changed']) {
     if ('copilot' in event.updates) {
-      await this.setup(event.updates.copilot?.scenarios);
+      //   await this.setup(event.updates.copilot?.scenarios);
     }
   }
 
