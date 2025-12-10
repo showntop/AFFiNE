@@ -129,14 +129,44 @@ const PromptSidebar = ({
   prompts: PromptListItem[];
   selected?: string;
   onSelect: (name: string) => void;
-  labels: { title: string; empty: string; noDesc: string };
+  labels: {
+    title: string;
+    empty: string;
+    noDesc: string;
+    searchPlaceholder: string;
+  };
 }) => {
+  const [keyword, setKeyword] = useState('');
+
+  const filteredPrompts = useMemo(() => {
+    const normalized = keyword.trim().toLowerCase();
+    if (!normalized) {
+      return prompts;
+    }
+    return prompts.filter(item => {
+      const name = item.name?.toLowerCase() ?? '';
+      const desc = (
+        item.action ||
+        item.messages?.[0]?.content ||
+        labels.noDesc
+      ).toLowerCase();
+      return name.includes(normalized) || desc.includes(normalized);
+    });
+  }, [keyword, labels.noDesc, prompts]);
+
   return (
     <div className={styles.sidebar}>
       <div className={styles.sidebarTitle}>{labels.title}</div>
-      {prompts.length ? (
+      <input
+        className={styles.sidebarSearch}
+        placeholder={labels.searchPlaceholder}
+        value={keyword}
+        onChange={event => setKeyword(event.target.value)}
+        type="search"
+      />
+      {filteredPrompts.length ? (
         <div className={styles.promptList}>
-          {prompts.map(item => (
+          {filteredPrompts.map(item => (
             <div
               key={item.name}
               className={styles.promptItem}
@@ -404,6 +434,7 @@ export const AgentBuilderModal = ({
             title: t['com.affine.ai.builder.sidebar.title'](),
             empty: t['com.affine.ai.builder.sidebar.empty'](),
             noDesc: t['com.affine.ai.builder.sidebar.noDesc'](),
+            searchPlaceholder: '搜索',
           }}
         />
         <div className={styles.contentMain}>
@@ -886,6 +917,7 @@ export const WorkflowBuilderModal = ({
             title: t['com.affine.ai.builder.sidebar.title'](),
             empty: t['com.affine.ai.builder.sidebar.empty'](),
             noDesc: t['com.affine.ai.builder.sidebar.noDesc'](),
+            searchPlaceholder: '搜索',
           }}
         />
         <div className={styles.contentMain}>

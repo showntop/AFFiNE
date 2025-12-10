@@ -184,6 +184,25 @@ export const sidebar = style({
   minHeight: 0,
 });
 
+export const sidebarSearch = style({
+  width: '100%',
+  height: 32,
+  minHeight: 32,
+  maxHeight: 32,
+  display: 'flex',
+  alignItems: 'center',
+  borderRadius: 8,
+  border: '1px solid var(--affine-border-color)',
+  padding: '0 10px',
+  lineHeight: '20px',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  boxSizing: 'border-box',
+  backgroundColor: 'var(--affine-background-primary-color)',
+  color: 'var(--affine-text-primary-color)',
+});
+
 export const sidebarTitle = style({
   fontSize: 14,
   fontWeight: 600,
