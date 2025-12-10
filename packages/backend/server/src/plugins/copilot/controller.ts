@@ -115,10 +115,11 @@ export class CopilotController implements BeforeApplicationShutdown {
       throw new CopilotSessionNotFound();
     }
 
-    const model = await session.resolveModel(
-      this.server.features.includes(ServerFeature.Payment),
-      modelId
-    );
+    // const model = await session.resolveModel(
+    //   this.server.features.includes(ServerFeature.Payment),
+    //   modelId
+    // );
+    const model = modelId || session.model;
 
     const hasAttachment = messageId
       ? !!(await session.getMessageById(messageId)).attachments?.length

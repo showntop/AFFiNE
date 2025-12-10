@@ -19,7 +19,7 @@ export class CopilotProviderFactory {
     } = {}
   ): Promise<CopilotProvider | null> {
     this.logger.debug(
-      `Resolving copilot provider for output type: ${cond.outputType}`
+      `Resolving copilot provider for output type: ${cond.outputType}, modelId: ${cond.modelId}`
     );
     let candidate: CopilotProvider | null = null;
     for (const [type, provider] of this.#providers.entries()) {
@@ -80,7 +80,7 @@ export class CopilotProviderFactory {
     return Array.from(this.#providers.values()).map(provider => ({
       type: provider.type,
       models: provider.models
-        .filter(m => !!m.id)
+        // .filter(m => !!m.id)
         .map(m => ({
           ...m,
           name: m.name || m.id,

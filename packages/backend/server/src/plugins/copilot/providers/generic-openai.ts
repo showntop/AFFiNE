@@ -29,12 +29,10 @@ import type {
   CopilotProviderModel,
   CopilotStructuredOptions,
   ModelConditions,
-  ModelInputType,
-  ModelOutputType,
   PromptMessage,
   StreamObject,
 } from './types';
-import { CopilotProviderType } from './types';
+import { CopilotProviderType, ModelOutputType } from './types';
 import {
   chatToGPTMessage,
   StreamObjectParser,
@@ -101,7 +99,7 @@ export class GenericOpenAIProvider extends CopilotProvider<GenericOpenAIConfig> 
     }
   }
 
-  private handleError(e: any, model: string) {
+  private handleError(e: any, _model: string) {
     if (e instanceof UserFriendlyError) {
       return e;
     } else if (e instanceof AISDKError) {
@@ -293,7 +291,10 @@ export class GenericOpenAIProvider extends CopilotProvider<GenericOpenAIConfig> 
     if (!prompt) throw new CopilotPromptInvalid('Prompt is required');
 
     try {
-      const modelInstance = this.#instance.image(model.id);
+      const imageProvider = this.#instance as unknown as {
+        image: (id: string) => any;
+      };
+      const modelInstance = imageProvider.image(model.id);
       const result = await generateImage({
         model: modelInstance,
         prompt,
@@ -341,7 +342,10 @@ export class GenericOpenAIProvider extends CopilotProvider<GenericOpenAIConfig> 
         .counter('generate_embedding_calls')
         .add(1, { model: model.id });
 
-      const modelInstance = this.#instance.embedding(model.id);
+      const embeddingProvider = this.#instance as unknown as {
+        embedding: (id: string) => any;
+      };
+      const modelInstance = embeddingProvider.embedding(model.id);
 
       const { embeddings } = await embedMany({
         model: modelInstance,

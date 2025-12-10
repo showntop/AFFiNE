@@ -108,7 +108,6 @@ export abstract class CopilotProvider<C = any> {
       (!outputType || cap.output.includes(outputType)) &&
       (!inputTypes?.length ||
         inputTypes.every(type => cap.input.includes(type)));
-
     if (modelId) {
       const hasOnlineModel = this.onlineModelList.includes(modelId);
 
